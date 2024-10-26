@@ -45,6 +45,25 @@ class TripReportPage extends StatelessWidget {
 	              child: TemperatureChart(),
 	            ),
 	            SizedBox(height: 20), 
+
+		    // Gráfico de barras para presión de gas
+	            Container(
+	              height: 200,
+	              decoration: BoxDecoration(
+	                color: Colors.white,
+	                borderRadius: BorderRadius.circular(15),
+	                boxShadow: [
+	                  BoxShadow(
+	                    color: Colors.grey.withOpacity(0.2),
+	                    spreadRadius: 5,
+	                    blurRadius: 7,
+	                    offset: Offset(0, 3),
+	                  ),
+	                ],
+	              ),
+	              child: PressureChart(),
+	            ),
+	            SizedBox(height: 20), 
 	    ]	 
 	 )
 	  );
