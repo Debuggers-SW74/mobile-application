@@ -64,6 +64,24 @@ class TripReportPage extends StatelessWidget {
 	              child: PressureChart(),
 	            ),
 	            SizedBox(height: 20), 
+
+		    // Botón de enviar alerta
+	            Center(
+	              child: ElevatedButton(
+	                onPressed: _sendAlert,
+	                style: ElevatedButton.styleFrom(
+	                  backgroundColor: Colors.red, 
+	                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+	                  shape: RoundedRectangleBorder(
+	                    borderRadius: BorderRadius.circular(30),
+	                  ),
+	                ),
+	                child: Text(
+	                  'Enviar Alerta',
+	                  style: TextStyle(fontSize: 18),
+	                ),
+	              ),
+	            ),
 	    ]	 
 	 )
 	  );
