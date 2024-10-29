@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:movil_application/alert_systems/presentation/trip_report_page.dart';
+import 'package:movil_application/common/widgets/home.dart';
 import 'package:movil_application/profile_management/domain/services/auth_service.dart';
 import 'package:movil_application/profile_management/pages/role_selection_screen.dart';
 
@@ -24,7 +24,7 @@ class _LoginPageState extends State<LoginPage> {
     if (user != null) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => TripReportPage()),
+        MaterialPageRoute(builder: (context) => const Home()),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

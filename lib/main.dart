@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:movil_application/alert_systems/presentation/trip_report_page.dart';
+import 'package:movil_application/profile_management/pages/login_page.dart';
 
 void main() {
   runApp(const MainApp());
@@ -11,11 +11,11 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false, // Opcional: Quita el banner de debug
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const TripReportPage(), // Llamando la página principal
+      home: const LoginPage(),
     );
   }
 }
