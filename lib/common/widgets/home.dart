@@ -26,7 +26,7 @@ class Home extends StatelessWidget {
           )
         ],
       ),
-      drawer: const Sidebar(),
+      drawer: const Sidebar(currentRoute: 'home'),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

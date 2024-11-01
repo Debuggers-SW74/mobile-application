@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:movil_application/alert_systems/presentation/trip_report_page.dart';
+import 'package:movil_application/common/widgets/home.dart';
+import 'package:movil_application/profile_management/pages/login_page.dart';
 
 class Sidebar extends StatelessWidget {
-  const Sidebar({super.key});
+
+  final String currentRoute;
+
+  const Sidebar({super.key, required  this.currentRoute});
 
   @override
   Widget build(BuildContext context) {
@@ -22,22 +28,40 @@ class Sidebar extends StatelessWidget {
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.dashboard),
-            title: const Text('Dashboard'),
+            leading: const Icon(Icons.home_filled),
+            title: const Text('Home'),
+            selected: currentRoute == 'home',
             onTap: () {
-
+              if (currentRoute != 'home') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Home()),
+                );
+              }
             },
           ),
           ListTile(
-            leading: const Icon(Icons.analytics),
-            title: const Text('Estadísticas'),
+            leading: const Icon(Icons.notifications),
+            title: const Text('Notifications'),
             onTap: () {
-              // Acción para las estadísticas
+              if (currentRoute != 'notifications') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const TripReportPage()),
+                );
+              }
             },
           ),
           ListTile(
-            leading: const Icon(Icons.settings),
-            title: const Text('Configuración'),
+            leading: const Icon(Icons.car_crash),
+            title: const Text('Trips'),
+            onTap: () {
+              // Acción para configuración
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.support),
+            title: const Text('Support'),
             onTap: () {
               // Acción para configuración
             },
@@ -46,7 +70,10 @@ class Sidebar extends StatelessWidget {
             leading: const Icon(Icons.logout),
             title: const Text('Cerrar Sesión'),
             onTap: () {
-              // Acción para cerrar sesión
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginPage()),
+              );
             },
           ),
         ],
