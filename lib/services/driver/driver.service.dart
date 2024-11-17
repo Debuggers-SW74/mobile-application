@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:fastporte/common/constants/shared_preferences_keys.constant.dart';
 import 'package:fastporte/models/entities/driver.dart';
+import 'package:fastporte/services/driver/update_driver.model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../../common/constants/environment_url.constant.dart';
+import '../../models/entities/trip.model.dart';
 
 class DriverService {
   final String baseUrl = EnvironmentConstants.CURRENT_ENV_URL;
@@ -44,6 +46,44 @@ class DriverService {
     } catch (e) {
       print('-> Error: $e');
       return null;
+    }
+  }
+
+  Future<bool> updateDriverById(UpdateDriver updateDriver) async {
+    try {
+
+      _prefs = await SharedPreferences.getInstance();
+      final token = _prefs.getString(SharedPreferencesKey.TOKEN);
+      final driverId = _prefs.getInt(SharedPreferencesKey.DRIVER_ID);
+
+      // Verifica si el token existe
+      if (token == null || token.isEmpty) {
+        throw Exception('Token not found');
+      }
+
+      updateDriver.id = driverId;
+
+      // Realiza la solicitud HTTP PUT con el token de autorización
+      final response = await http.put(
+        Uri.parse('$baseUrl/drivers'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token', // Token de autorización
+        },
+        body: jsonEncode(updateDriver.toJson()),
+      );
+      print(updateDriver.toJson());
+      print('-> Response: ${response.statusCode}');
+
+      // Verifica el código de estado de la respuesta
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw Exception('Failed to update driver details: ${response.body}');
+      }
+    } catch (e) {
+      print('-> Error: $e');
+      return false;
     }
   }
 

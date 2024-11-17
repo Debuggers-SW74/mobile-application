@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:fastporte/common/constants/shared_preferences_keys.constant.dart';
 import 'package:fastporte/services/driver/driver.service.dart';
+import 'package:fastporte/services/driver/update_driver.model.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,6 +17,7 @@ class DriverInfoProvider with ChangeNotifier {
   late SharedPreferences _prefs;
 
   Driver? get driver => _driver;
+
   bool get isLoading => _isLoading;
 
   /*Future<bool> fetchClient() async {
@@ -83,10 +85,34 @@ class DriverInfoProvider with ChangeNotifier {
     return true;
   }
 
-  void updateClient(Driver driver) {
+  void updateDriver(Driver driver) {
     _driver = driver;
     _saveDriverToPreferences(driver);
     notifyListeners();
+  }
+
+  Future<bool> updateDriverProfileInfo(UpdateDriver driverToUpdate) async {
+    _prefs = await SharedPreferences.getInstance();
+    bool success = await _driverService.updateDriverById(driverToUpdate);
+
+    if (success) {
+      Driver newDriver = Driver(
+        id: _driver!.id,
+        name: driverToUpdate.name!,
+        firstLastName: driverToUpdate.firstLastName!,
+        secondLastName: driverToUpdate.secondLastName!,
+        email: driverToUpdate.email!,
+        phone: driverToUpdate.phone!,
+        username: _driver!.username,
+        supervisorId: _driver!.supervisorId,
+        userId: _driver!.userId,
+      );
+      updateDriver(newDriver);
+    } else {
+      throw Exception('Failed to update driver details');
+    }
+    notifyListeners();
+    return success;
   }
 
   void clearDriver() async {
