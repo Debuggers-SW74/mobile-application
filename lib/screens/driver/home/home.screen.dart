@@ -17,6 +17,9 @@ import 'package:go_router/go_router.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
+import '../../../models/entities/trip.model.dart';
+import '../../../services/trip/trip.service.dart';
+
 class ClientHomeScreen extends StatefulWidget {
   const ClientHomeScreen({super.key});
 
@@ -27,7 +30,10 @@ class ClientHomeScreen extends StatefulWidget {
 class _ClientHomeScreenState extends State<ClientHomeScreen> {
   late Driver? driver;
 
-  DriverService driverService = DriverService();
+  final DriverService driverService = DriverService();
+  final TripService _tripService = TripService();
+  late Future<List<Trip>> _futureTrips;
+
   Logger logger = Logger();
 
   Future<Client>? _futureClient;
@@ -35,6 +41,8 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
   @override
   void initState() {
     super.initState();
+
+    _futureTrips = _tripService.getTripsByDriverId();
   }
 
   @override
@@ -236,7 +244,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
                 ),
                 const SizedBox(width: AppConstrainsts.spacingMedium),
                 Text(
-                  'Recent Contracts',
+                  'Recent trips',
                   style: AppTextStyles.headlineSmall(context).copyWith(
                     color: AppColors.primary,
                   ),
@@ -262,70 +270,83 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
           decoration: const BoxDecoration(
             color: AppColors.surface,
           ),
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: 5,
-            itemBuilder: (context, index) {
-              return InkWell(
-                onTap: () {
-                  //context.goNamed(AppRoutes.clientContracts);
-                },
-                child: Container(
-                  width: 250.0,
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 8.0,
-                    vertical: 8.0,
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0,
-                    vertical: 10.0,
-                  ),
-                  decoration: shadowBoxDecoration(),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          CircleAvatar(
-                            radius: 40,
-                            backgroundColor: Colors.grey[200],
-                            backgroundImage: const NetworkImage(DefaultData.DEFAULT_PROFILE_IMAGE),
-                          ),
-                          const SizedBox(height: AppConstrainsts.spacingSmall),
-                        ],
+          child: FutureBuilder<List<Trip>>(
+            future: _futureTrips,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return const Center(child: Text('No trips found'));
+              } else {
+                List<Trip> trips = snapshot.data!.take(5).toList(); // Toma solo los primeros 5 trips
+
+                return ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: trips.length,
+                  itemBuilder: (context, index) {
+                    Trip trip = trips[index];
+                    return InkWell(
+                      onTap: () {
+                        // Navega a la pantalla de detalles del viaje
+                        // context.goNamed(AppRoutes.clientContracts);
+                      },
+                      child: Container(
+                        width: 250.0,
+                        margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+                        decoration: shadowBoxDecoration(),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                CircleAvatar(
+                                  radius: 40,
+                                  backgroundColor: Colors.grey[200],
+                                  backgroundImage: const NetworkImage(DefaultData.DEFAULT_PROFILE_IMAGE),
+                                ),
+                                const SizedBox(height: AppConstrainsts.spacingSmall),
+                              ],
+                            ),
+                            const SizedBox(width: AppConstrainsts.spacingSmall),
+                            Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Driver info:',
+                                    style: AppTextStyles.labelSmall(context).copyWith(color: AppColors.onSurface),
+                                  ),
+                                  const SizedBox(height: 2.0),
+                                  Text(
+                                    '${trip.driverName}',
+                                    style: AppTextStyles.labelMedium(context).copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.onSurface,
+                                        overflow: TextOverflow.ellipsis),
+                                  ),
+                                  const SizedBox(height: AppConstrainsts.spacingSmall),
+                                  Text('From: ${trip.origin}', style: AppTextStyles.labelSmall(context)),
+                                  const SizedBox(height: 2.0),
+                                  Text('To: ${trip.destination}', style: AppTextStyles.labelSmall(context)),
+                                  const SizedBox(height: 2.0),
+                                  Text('Date: ${trip.date}', style: AppTextStyles.labelSmall(context)),
+                                  const SizedBox(height: 2.0),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
                       ),
-                      const SizedBox(width: AppConstrainsts.spacingSmall),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Driver info:',
-                            style: AppTextStyles.labelSmall(context).copyWith(color: AppColors.onSurface),
-                          ),
-                          const SizedBox(height: 2.0),
-                          Text(
-                            '${driver.name} ${driver.firstLastName}',
-                            style: AppTextStyles.labelMedium(context).copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.onSurface,
-                                overflow: TextOverflow.ellipsis),
-                          ),
-                          const SizedBox(height: AppConstrainsts.spacingSmall),
-                          Text('From: Lugar ABC', style: AppTextStyles.labelSmall(context)),
-                          const SizedBox(height: 2.0),
-                          Text('To: Lugar XYZ', style: AppTextStyles.labelSmall(context)),
-                          const SizedBox(height: 2.0),
-                          Text('Date: 2021-09-01', style: AppTextStyles.labelSmall(context)),
-                          const SizedBox(height: 2.0),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-              );
+                    );
+                  },
+                );
+              }
             },
           ),
         ),
@@ -346,7 +367,8 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
   ScreenTemplate homeUserNotFound() {
     return const ScreenTemplate(
       children: [
-        Text('User info not found, please try again later or login again'),
+        //Circular progress
+        CircularProgressIndicator(),
       ],
     );
   }

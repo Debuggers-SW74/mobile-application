@@ -1,5 +1,3 @@
-
-
 class Driver {
   final int id;
   final String name;
