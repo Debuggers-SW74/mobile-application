@@ -63,10 +63,6 @@ class _DriverCurrentTripDataScreenState extends State<DriverCurrentTripDataScree
                 ),
                 const SizedBox(height: 20),
 
-                Container(
-                  
-                )
-
                 // Botón de enviar alerta
                 Center(
                   child: CustomElevatedButton(
