@@ -1,4 +1,3 @@
-import 'package:fastporte/widgets/screen.template.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../common/constants/app.constraints.constant.dart';

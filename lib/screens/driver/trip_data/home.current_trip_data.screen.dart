@@ -39,53 +39,33 @@ class _DriverCurrentTripDataScreenState extends State<DriverCurrentTripDataScree
       child: ScreenTemplate(
         children: [
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(4.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Sensor data',
+                const Text(
+                  'Sensor information',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
 
                 // Gráfico de lineas para temperatura
                 Container(
-                  height: 300,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
-                        spreadRadius: 5,
-                        blurRadius: 7,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: TemperatureChart(),
+                  height: 400,
+                  child: const TemperatureChart(),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
 
                 // Gráfico de barras para presión de gas
                 Container(
                   height: 200,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
-                        spreadRadius: 5,
-                        blurRadius: 7,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: PressureChart(),
+                  child: const PressureChart(),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
+
+                Container(
+                  
+                )
 
                 // Botón de enviar alerta
                 Center(

@@ -1,4 +1,3 @@
-import 'package:fastporte/widgets/contracts/driver_resume.widget.dart';
 import 'package:flutter/material.dart';
 
 import '../../common/constants/app.colors.constant.dart';
@@ -26,27 +25,27 @@ class TripResume extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CustomDetailRichText(
+          const CustomDetailRichText(
             title: 'From: ',
             description: 'Avenida Arica 601 Lima 05, Breña 15083', //widget.requestService.origin,
           ),
           const SizedBox(height: AppConstrainsts.spacingMedium),
-          CustomDetailRichText(
+          const CustomDetailRichText(
             title: 'To: ',
             description: 'Ciudad de Caral, Lomas de Lachay', //widget.requestService.destination,
           ),
           const SizedBox(height: AppConstrainsts.spacingMedium),
-          CustomDetailRichText(
+          const CustomDetailRichText(
             title: 'Service Type: ',
             description: 'Moving', //widget.requestService.typeOfService,
           ),
           const SizedBox(height: AppConstrainsts.spacingMedium),
-          CustomDetailRichText(
+          const CustomDetailRichText(
             title: 'Date: ',
             description: '21/10/2022', //widget.requestService.date,
           ),
           const SizedBox(height: AppConstrainsts.spacingMedium),
-          CustomDetailRichText(
+          const CustomDetailRichText(
             title: 'Time: ',
             description: '09:00 - 15:00',
             //'${widget.requestService.startTime} - ${widget.requestService.endTime}',
@@ -76,9 +75,9 @@ class TripResume extends StatelessWidget {
                       Expanded(
                         child: Container(
                           alignment: Alignment.center,
-                          child: Text(
+                          child: const Text(
                             'S/. 123', //${widget.requestService.amount}',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w900,
                               color: AppColors.primary,

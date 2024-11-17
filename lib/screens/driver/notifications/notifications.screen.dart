@@ -1,7 +1,6 @@
 import 'package:fastporte/common/constants/button_type.enum.dart';
 import 'package:fastporte/widgets/app_bar/logged.app_bar.dart';
 import 'package:fastporte/widgets/elevated_button/custom.elevated_button.dart';
-import 'package:fastporte/widgets/screen.template.dart';
 import 'package:flutter/material.dart';
 
 import '../../../common/constants/app.constraints.constant.dart';
@@ -36,7 +35,7 @@ class _ClientNotificationsScreenState extends State<ClientNotificationsScreen> {
                 ListView.builder(
                   itemCount: 5,
                   itemBuilder: (context, index) {
-                    return NotificationComponent(
+                    return const NotificationComponent(
                       notificationType: NotificationType.tripAssigned,
                     );
                   },

@@ -6,7 +6,6 @@ import 'package:fastporte/widgets/screen.template.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../providers/driver_info.provider.dart';
 
 class PersonalInformationTab extends StatefulWidget {
   const PersonalInformationTab({super.key});
@@ -30,9 +29,9 @@ class _PersonalInformationTabState extends State<PersonalInformationTab> {
         const SizedBox(height: AppConstrainsts.spacingMedium),
         InformationRow(label: 'Email', value: driver!.email),
         const SizedBox(height: AppConstrainsts.spacingMedium),
-        InformationRow(label: 'Age', value: '20'),
+        const InformationRow(label: 'Age', value: '20'),
         const SizedBox(height: AppConstrainsts.spacingMedium),
-        InformationRow(label: 'Phone', value: '923654788'),
+        const InformationRow(label: 'Phone', value: '923654788'),
         const SizedBox(height: AppConstrainsts.spacingMedium),
       ],
     );

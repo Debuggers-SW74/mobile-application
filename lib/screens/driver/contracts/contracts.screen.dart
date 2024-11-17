@@ -1,6 +1,5 @@
 import 'package:fastporte/screens/driver/contracts/widgets/history_contracts.tab.dart';
 import 'package:fastporte/screens/driver/contracts/widgets/pending_contracts.tab.dart';
-import 'package:fastporte/screens/driver/contracts/widgets/sent_contracts.tab.dart';
 import 'package:fastporte/widgets/app_bar/logged.app_bar.dart';
 import 'package:fastporte/widgets/screen.template.dart';
 import 'package:flutter/material.dart';

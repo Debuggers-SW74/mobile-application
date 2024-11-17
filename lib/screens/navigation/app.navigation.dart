@@ -1,5 +1,4 @@
 import 'package:fastporte/common/constants/app.routes.constant.dart';
-import 'package:fastporte/models/entities/driver.dart';
 import 'package:fastporte/screens/auth/login/login.screen.dart';
 import 'package:fastporte/screens/auth/register/account_information.screen.dart';
 import 'package:fastporte/screens/auth/register/personal_information.screen.dart';
@@ -16,7 +15,6 @@ import 'package:fastporte/screens/driver/profile/profile.screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../models/entities/vehicle.dart';
 import '../driver/trip_data/home.current_trip_data.screen.dart';
 
 class AppNavigation {

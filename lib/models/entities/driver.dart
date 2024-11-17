@@ -1,6 +1,4 @@
-import 'dart:ffi';
 
-import 'package:fastporte/models/entities/vehicle.dart';
 
 class Driver {
   final int id;

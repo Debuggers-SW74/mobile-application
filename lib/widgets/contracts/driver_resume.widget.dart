@@ -11,14 +11,14 @@ class DriverResume extends StatelessWidget {
     return const Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text(
+        Text(
           'Driver data',
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w500,
           ),
         ),
-        const SizedBox(height: AppConstrainsts.spacingSmall),
+        SizedBox(height: AppConstrainsts.spacingSmall),
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -29,7 +29,7 @@ class DriverResume extends StatelessWidget {
                 //widget.requestService.driver.profilePicture),
               ),
             ),
-            const SizedBox(width: AppConstrainsts.spacingMedium),
+            SizedBox(width: AppConstrainsts.spacingMedium),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -38,7 +38,7 @@ class DriverResume extends StatelessWidget {
                     title: '',
                     description: 'John Doe', //widget.requestService.driver.name,
                   ),
-                  const SizedBox(height: AppConstrainsts.spacingSmall),
+                  SizedBox(height: AppConstrainsts.spacingSmall),
                   CustomDetailRichText(
                     title: 'Cel.: ',
                     description:
