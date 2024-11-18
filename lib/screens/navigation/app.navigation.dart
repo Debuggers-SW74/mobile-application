@@ -6,7 +6,7 @@ import 'package:fastporte/screens/auth/register/personal_information.screen.dart
 import 'package:fastporte/screens/auth/register/select_type_profile.screen.dart';
 import 'package:fastporte/screens/auth/reset_password/forgot_password.screen.dart';
 import 'package:fastporte/screens/auth/reset_password/insert_new_password.screen.dart';
-import 'package:fastporte/screens/driver/contracts/contracts.screen.dart';
+import 'package:fastporte/screens/driver/trips/trips.screen.dart';
 import 'package:fastporte/screens/driver/home/home.screen.dart';
 import 'package:fastporte/screens/driver/main.screen.dart';
 import 'package:fastporte/screens/driver/more/more.screen.dart';
