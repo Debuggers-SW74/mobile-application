@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:fastporte/common/constants/shared_preferences_keys.constant.dart';
 import 'package:fastporte/models/entities/driver.dart';
 import 'package:fastporte/models/entities/register.model.dart';
+import 'package:fastporte/providers/registration.provider.dart';
 import 'package:fastporte/services/driver/update_driver.model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -88,7 +89,8 @@ class DriverService {
     }
   }
 
-  Future<bool> registerDriver(RegisterUSer registerUser) async {
+  Future<RegisterUserResponse> registerDriver(RegisterUSer registerUser) async {
+
     try {
       // Realiza la solicitud HTTP POST
       final response = await http.post(
@@ -101,13 +103,15 @@ class DriverService {
 
       // Verifica el código de estado de la respuesta
       if (response.statusCode == 201) { //
-        return true;
+        return RegisterUserResponse(success: true, message: 'Driver registered successfully');
       } else {
-        throw Exception('Failed to register driver: ${response.body}');
+        //Solo obtener el campo message del body para devolverlo en el objeto
+        var data = jsonDecode(response.body);
+        return RegisterUserResponse(success: false, message: data['message']);
       }
     } catch (e) {
       print('-> Error: $e');
-      return false;
+      return RegisterUserResponse(success: false, message: 'Error registering driver: $e');
     }
   }
 

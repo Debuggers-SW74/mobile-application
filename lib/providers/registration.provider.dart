@@ -35,21 +35,31 @@ class RegistrationProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> register() async {
+  Future<RegisterUserResponse> register() async {
+    RegisterUserResponse response;
+
     if(role == 'ROLE_DRIVER') {
       try {
         return await _driverService.registerDriver(_data);
+
       } catch (e) {
-        print('Error registering driver: $e');
-        return false;
+        response = RegisterUserResponse(success: false, message: 'Error registering driver: $e');
       }
     } else {
-      return false;
-
+      response = RegisterUserResponse(success: false, message: 'Role not found');
     }
+
+    return response;
   }
 
   // Método para obtener los datos completos
   RegisterUSer get data => _data;
   String get role => _role;
+}
+
+class RegisterUserResponse {
+  final bool success;
+  final String message;
+
+  RegisterUserResponse({required this.success, required this.message});
 }

@@ -22,8 +22,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  bool isDriver = true;
-  List<bool> isSelected = [true, false];
 
   final AuthService _authService = AuthService();
 
@@ -64,11 +62,6 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _scrollToBottom() {
-    // _scrollController.animateTo(
-    //   _scrollController.position.maxScrollExtent,
-    //   duration: const Duration(milliseconds: 300),
-    //   curve: Curves.easeOut,
-    // );
   }
 
   bool isLoginFormValid() {
@@ -141,34 +134,6 @@ class _LoginPageState extends State<LoginPage> {
                         color: AppColors.primary,
                         fontWeight: FontWeight.bold,
                       ),
-                    ),
-                    const SizedBox(height: AppConstrainsts.spacingLarge),
-                    Center(
-                      child: ToggleButtons(
-                          isSelected: isSelected,
-                          borderRadius: BorderRadius.circular(16.0),
-                          onPressed: (int index) {
-                            setState(() {
-                              for (int buttonIndex = 0; buttonIndex < isSelected.length; buttonIndex++) {
-                                if (buttonIndex == index) {
-                                  isSelected[buttonIndex] = true;
-                                  isDriver = buttonIndex == 0;
-                                } else {
-                                  isSelected[buttonIndex] = false;
-                                }
-                              }
-                            });
-                          },
-                          children: const <Widget>[
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 16.0),
-                              child: Text('Driver'),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 16.0),
-                              child: Text('Supervisor'),
-                            ),
-                          ]),
                     ),
                     const SizedBox(height: AppConstrainsts.spacingLarge),
                     CustomTextFormField(

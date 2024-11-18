@@ -31,9 +31,6 @@ class _ClientMainScreenState extends State<ClientMainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // bottomNavigationBar: _shouldShowNavigationBar(context)
-      //     ? ClientNavigationBar(navigationShell: widget.navigationShell)
-      //     : null,
       bottomNavigationBar: DriverNavigationBar(navigationShell: widget.navigationShell),
       body: SafeArea(top: false, child: widget.navigationShell),
     );

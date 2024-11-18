@@ -274,21 +274,20 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> with 
           _phoneNumberController.text,
         );
 
-        bool success = await registrationProvider.register();
+        RegisterUserResponse response = await registrationProvider.register();
 
-
-        if (success) {
+        if (response.success) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Account created successfully'),
+            SnackBar(
+              content: Text(response.message),
               backgroundColor: AppColors.secondary,
             ),
           );
           context.goNamed(AppRoutes.login);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('An error occurred. Please try again.'),
+            SnackBar(
+              content: Text(response.message),
               backgroundColor: AppColors.error,
             ),
           );

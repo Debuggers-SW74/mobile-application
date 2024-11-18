@@ -7,12 +7,10 @@ import 'package:fastporte/screens/auth/register/select_type_profile.screen.dart'
 import 'package:fastporte/screens/auth/reset_password/forgot_password.screen.dart';
 import 'package:fastporte/screens/auth/reset_password/insert_new_password.screen.dart';
 import 'package:fastporte/screens/driver/contracts/contracts.screen.dart';
-import 'package:fastporte/screens/driver/home/favourites.screen.dart';
 import 'package:fastporte/screens/driver/home/home.screen.dart';
 import 'package:fastporte/screens/driver/main.screen.dart';
 import 'package:fastporte/screens/driver/more/more.screen.dart';
 import 'package:fastporte/screens/driver/notifications/notifications.screen.dart';
-import 'package:fastporte/screens/driver/profile/edit_profile.screen.dart';
 import 'package:fastporte/screens/driver/profile/profile.screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -118,11 +116,6 @@ class AppNavigation {
                   name: AppRoutes.driverHome,
                   builder: (context, state) => const ClientHomeScreen(),
                   routes: <RouteBase>[
-                    GoRoute(
-                      path: 'favourites',
-                      name: AppRoutes.driverFavourites,
-                      builder: (context, state) => const ClientFavouritesScreen(),
-                    ),
                     ..._profileRoutes(AppRoutes.driverHome),
                   ])
             ],
@@ -193,22 +186,6 @@ class AppNavigation {
         name: '${from}_profile',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => ClientProfileScreen(from: from),
-        routes: [
-          GoRoute(
-            path: 'edit',
-            name: '${from}_edit_profile',
-            parentNavigatorKey: _rootNavigatorKey,
-            builder: (context, state) => ClientEditProfileScreen(from: from),
-            routes: [
-              GoRoute(
-                path: 'change-password',
-                name: '${from}_change_password',
-                parentNavigatorKey: _rootNavigatorKey,
-                builder: (context, state) => ClientProfileScreen(from: from),
-              ),
-            ],
-          ),
-        ],
       ),
       GoRoute(
         path: 'current-trip-data',
