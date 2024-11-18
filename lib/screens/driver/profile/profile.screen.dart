@@ -5,6 +5,7 @@ import 'package:fastporte/common/constants/button_type.enum.dart';
 import 'package:fastporte/common/constants/default_data.constant.dart';
 import 'package:fastporte/providers/driver_info.provider.dart';
 import 'package:fastporte/models/entities/driver.dart';
+
 import 'package:fastporte/services/driver/driver.service.dart';
 import 'package:fastporte/widgets/app_bar/logged.app_bar.dart';
 import 'package:fastporte/widgets/elevated_button/custom.elevated_button.dart';

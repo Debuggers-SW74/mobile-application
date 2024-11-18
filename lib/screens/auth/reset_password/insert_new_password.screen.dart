@@ -5,12 +5,8 @@ import 'package:fastporte/common/constants/app.text_styles.constant.dart';
 import 'package:fastporte/common/constants/button_type.enum.dart';
 import 'package:fastporte/util/validators/input.validators.dart';
 import 'package:fastporte/widgets/elevated_button/custom.elevated_button.dart';
-import 'package:fastporte/widgets/elevated_button/template.button_style.dart';
 import 'package:fastporte/widgets/app_bar/main.app_bar.dart';
 import 'package:fastporte/widgets/text_field/custom.text_form_field.dart';
-import 'package:fastporte/widgets/text_field/template.input_decoration.dart';
-import 'package:fastporte/widgets/text_field/template.prefix_icon.dart';
-import 'package:fastporte/widgets/text_field/template.suffix_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
