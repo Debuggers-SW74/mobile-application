@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:fastporte/common/constants/shared_preferences_keys.constant.dart';
 import 'package:fastporte/models/entities/driver.dart';
+import 'package:fastporte/models/entities/register.model.dart';
 import 'package:fastporte/services/driver/update_driver.model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -80,6 +81,29 @@ class DriverService {
         return true;
       } else {
         throw Exception('Failed to update driver details: ${response.body}');
+      }
+    } catch (e) {
+      print('-> Error: $e');
+      return false;
+    }
+  }
+
+  Future<bool> registerDriver(RegisterUSer registerUser) async {
+    try {
+      // Realiza la solicitud HTTP POST
+      final response = await http.post(
+        Uri.parse('$baseUrl/drivers'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(registerUser.toJson()),
+      );
+
+      // Verifica el código de estado de la respuesta
+      if (response.statusCode == 201) { //
+        return true;
+      } else {
+        throw Exception('Failed to register driver: ${response.body}');
       }
     } catch (e) {
       print('-> Error: $e');

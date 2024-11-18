@@ -242,4 +242,18 @@ class InputValidators {
 
     return amountError;
   }
+
+  static String? validateSensorCode(String value) {
+    String? sensorCodeError;
+
+    if (value.isEmpty) {
+      sensorCodeError = 'Please enter the sensor code';
+    }
+
+    else if (!RegExp(r'^[a-zA-Z0-9]+$').hasMatch(value)) {
+      sensorCodeError = 'The sensor code must contain only letters and numbers';
+    }
+
+    return sensorCodeError;
+  }
 }

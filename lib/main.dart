@@ -2,6 +2,7 @@ import 'package:fastporte/common/constants/app.colors.constant.dart';
 import 'package:fastporte/common/constants/app.text_styles.constant.dart';
 import 'package:fastporte/providers/driver_info.provider.dart';
 import 'package:fastporte/providers/driver_info.provider.dart';
+import 'package:fastporte/providers/registration.provider.dart';
 import 'package:fastporte/screens/navigation/app.navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,10 +10,15 @@ import 'package:provider/provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(ChangeNotifierProvider(
-    create: (_) => DriverInfoProvider(),
-    child: const MyApp(),
-  ));
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => DriverInfoProvider()),
+        ChangeNotifierProvider(create: (_) => RegistrationProvider()), // Agrega tu otro ChangeNotifier aquí
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

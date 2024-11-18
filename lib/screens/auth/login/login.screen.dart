@@ -229,7 +229,7 @@ class _LoginPageState extends State<LoginPage> {
                     Center(
                       child: GestureDetector(
                         onTap: () {
-                          context.goNamed(AppRoutes.registerPersonalInformation);
+                          context.goNamed(AppRoutes.registerSensorCode);
                         },
                         child: Text(
                           'Create an Account',

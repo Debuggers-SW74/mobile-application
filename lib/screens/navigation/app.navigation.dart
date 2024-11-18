@@ -1,8 +1,9 @@
 import 'package:fastporte/common/constants/app.routes.constant.dart';
-import 'package:fastporte/models/entities/driver.dart';
 import 'package:fastporte/screens/auth/login/login.screen.dart';
 import 'package:fastporte/screens/auth/register/account_information.screen.dart';
+import 'package:fastporte/screens/auth/register/insert_sensor_code.screen.dart';
 import 'package:fastporte/screens/auth/register/personal_information.screen.dart';
+import 'package:fastporte/screens/auth/register/select_type_profile.screen.dart';
 import 'package:fastporte/screens/auth/reset_password/forgot_password.screen.dart';
 import 'package:fastporte/screens/auth/reset_password/insert_new_password.screen.dart';
 import 'package:fastporte/screens/driver/contracts/contracts.screen.dart';
@@ -16,7 +17,6 @@ import 'package:fastporte/screens/driver/profile/profile.screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../models/entities/vehicle.dart';
 import '../driver/trip_data/home.current_trip_data.screen.dart';
 
 class AppNavigation {
@@ -48,20 +48,40 @@ class AppNavigation {
               ),
           routes: [
             GoRoute(
-              path: 'register/personal-information',
-              name: AppRoutes.registerPersonalInformation,
+              path: 'register/sensor-code',
+              name: AppRoutes.registerSensorCode,
               pageBuilder: (context, state) => MaterialPage(
                 key: state.pageKey,
-                child: const PersonalInformationPage(),
+                child: const InsertSensorCode(),
               ),
               routes: [
                 GoRoute(
-                  path: 'account-information',
-                  name: AppRoutes.registerAccountInformation,
-                  pageBuilder: (context, state) => MaterialPage(
-                    key: state.pageKey,
-                    child: const AccountInformationPage(),
-                  ),
+                    path: 'type-profile',
+                    name: AppRoutes.registerTypeProfile,
+                    pageBuilder: (context, state) => MaterialPage(
+                      key: state.pageKey,
+                      child: const SelectTypeProfile(),
+                    ),
+                  routes: [
+                    GoRoute(
+                      path: 'account-information',
+                      name: AppRoutes.registerAccountInformation,
+                      pageBuilder: (context, state) => MaterialPage(
+                        key: state.pageKey,
+                        child: const AccountInformationPage(),
+                      ),
+                      routes: [
+                        GoRoute(
+                          path: 'personal-information',
+                          name: AppRoutes.registerPersonalInformation,
+                          pageBuilder: (context, state) => MaterialPage(
+                            key: state.pageKey,
+                            child: const PersonalInformationPage(),
+                          ),
+                        )
+                      ]
+                    ),
+                  ]
                 ),
               ],
             ),

@@ -4,8 +4,10 @@ class AppRoutes {
 
   static const String home = 'home';
 
-  static const String registerPersonalInformation = 'register-personal-information';
+  static const String registerSensorCode = 'register-sensor-code';
+  static const String registerTypeProfile = 'select-type-profile';
   static const String registerAccountInformation = 'account-information';
+  static const String registerPersonalInformation = 'personal-information';
 
   static const String resetForgotPassword = 'forgot-password';
   static const String resetInsertNewPassword = 'insert-new-password';
