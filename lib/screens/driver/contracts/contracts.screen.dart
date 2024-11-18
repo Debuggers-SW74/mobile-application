@@ -14,7 +14,7 @@ class ClientContractsScreen extends StatelessWidget {
     return const DefaultTabController(
       length: 2,
       child: Scaffold(
-        appBar: LoggedAppBar(title: 'Contracts'),
+        appBar: LoggedAppBar(title: 'Trips'),
         body: Column(
           children: [
             ScreenTemplate(
@@ -26,7 +26,7 @@ class ClientContractsScreen extends StatelessWidget {
                   tabs: <Widget>[
                     //Tab(child: Text('Sent')),
                     Tab(child: Text('Pending')),
-                    Tab(child: Text('History')),
+                    Tab(child: Text('Finished')),
                   ],
                 ),
               ]
