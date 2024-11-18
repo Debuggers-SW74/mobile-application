@@ -9,8 +9,9 @@ import '../../../common/constants/app.constraints.constant.dart';
 import '../../../widgets/container/shadow.box_decoration.dart';
 
 class ClientNotificationsScreen extends StatefulWidget {
-  const ClientNotificationsScreen({super.key});
+  const ClientNotificationsScreen({super.key, required this.userType});
 
+  final String userType;
   @override
   State<ClientNotificationsScreen> createState() =>
       _ClientNotificationsScreenState();
@@ -23,12 +24,12 @@ class _ClientNotificationsScreenState extends State<ClientNotificationsScreen> {
   @override
   void initState() {
     super.initState();
-    _futureNotifications = _notificationService.getNotificationByUserId();
+    _futureNotifications = _notificationService.getNotificationByUserId(widget.userType);
   }
 
   Future<void> _refreshNotifications() async {
     setState(() {
-      _futureNotifications = _notificationService.getNotificationByUserId();
+      _futureNotifications = _notificationService.getNotificationByUserId(widget.userType);
     });
   }
 
@@ -52,7 +53,7 @@ class _ClientNotificationsScreenState extends State<ClientNotificationsScreen> {
               } else if (snapshot.hasError) {
                 return Center(child: Text('Error: ${snapshot.error}'));
               } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return const Center(child: Text('No finished trips found'));
+                return const Center(child: Text('No notifications found'));
               } else {
                 List<UserNotification> notifications = snapshot.data!.toList();
 
@@ -84,35 +85,34 @@ class NotificationComponent extends StatefulWidget {
 
 class _NotificationComponentState extends State<NotificationComponent> {
   String? _notificationTitle;
-  String? _notificationImageUrl;
+  String? _notificationImage;
 
   @override
   Widget build(BuildContext context) {
     switch (widget.notification.type) {
       case 'TRIP_ASSIGNED':
         _notificationTitle = 'Trip assigned';
-        _notificationImageUrl =
-        'https://static.vecteezy.com/system/resources/previews/046/014/200/non_2x/check-mark-icon-symbols-free-png.png';
+        _notificationImage = 'assets/images/trip_created.png';
         break;
       case 'TRIP_CANCELLED':
         _notificationTitle = 'Trip cancelled';
-        _notificationImageUrl =
-        'https://png.pngtree.com/png-vector/20190215/ourmid/pngtree-vector-cancel-icon-png-image_533028.jpg';
+        _notificationImage = 'assets/images/trip_cancelled.png';
         break;
       case 'TRIP_FINISHED':
         _notificationTitle = 'Trip finished';
-        _notificationImageUrl =
-        'https://thumbs.dreamstime.com/b/task-completed-vector-icon-isolated-white-background-83422757.jpg';
+        _notificationImage = 'assets/images/trip_finished.png';
         break;
       case 'TRIP_STARTED':
         _notificationTitle = 'Trip started';
-        _notificationImageUrl =
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSXhHbH6ioC2SAdojY2CgLwX4FQhhcWZcQKOA&s';
+        _notificationImage = 'assets/images/trip_started.png';
         break;
+      case 'TRIP_CREATED':
+        _notificationTitle = 'Trip created';
+        _notificationImage = 'assets/images/trip_created.png';
       default:
-        _notificationTitle = 'Trip assigned';
-        _notificationImageUrl =
-        'https://static.vecteezy.com/system/resources/previews/046/014/200/non_2x/check-mark-icon-symbols-free-png.png';
+        _notificationTitle = '';
+        _notificationImage =
+        '';
     }
 
     return Container(
@@ -129,7 +129,7 @@ class _NotificationComponentState extends State<NotificationComponent> {
           CircleAvatar(
             radius: 30,
             backgroundColor: Colors.grey[200],
-            backgroundImage: NetworkImage(_notificationImageUrl!),
+            backgroundImage: AssetImage(_notificationImage!),
           ),
           const SizedBox(width: AppConstrainsts.spacingLarge),
           Column(

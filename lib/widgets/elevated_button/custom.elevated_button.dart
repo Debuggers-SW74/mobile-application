@@ -49,7 +49,7 @@ class CustomElevatedButton extends StatelessWidget {
 
 
     return ElevatedButton(
-      onPressed: onPressed,
+      onPressed: isEnabled ? onPressed : null,
       style: templateButtonStyle(type: type),
       child: Text(
         text.toUpperCase(),

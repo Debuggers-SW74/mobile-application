@@ -6,7 +6,6 @@ import 'package:fastporte/common/constants/button_type.enum.dart';
 import 'package:fastporte/common/constants/default_data.constant.dart';
 import 'package:fastporte/models/entities/driver.dart';
 import 'package:fastporte/providers/driver_info.provider.dart';
-import 'package:fastporte/models/entities/client.dart';
 import 'package:fastporte/services/driver/driver.service.dart';
 import 'package:fastporte/widgets/app_bar/logged.app_bar.dart';
 import 'package:fastporte/widgets/container/shadow.box_decoration.dart';
@@ -35,8 +34,6 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
   late Future<List<Trip>> _futureTrips;
 
   Logger logger = Logger();
-
-  Future<Client>? _futureClient;
 
   @override
   void initState() {
@@ -331,11 +328,11 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
                                         overflow: TextOverflow.ellipsis),
                                   ),
                                   const SizedBox(height: AppConstrainsts.spacingSmall),
-                                  Text('From: ${trip.origin}', style: AppTextStyles.labelSmall(context)),
+                                  Text('From: ${trip.origin}', style: AppTextStyles.labelSmall(context), overflow: TextOverflow.ellipsis),
                                   const SizedBox(height: 2.0),
-                                  Text('To: ${trip.destination}', style: AppTextStyles.labelSmall(context)),
+                                  Text('To: ${trip.destination}', style: AppTextStyles.labelSmall(context), overflow: TextOverflow.ellipsis),
                                   const SizedBox(height: 2.0),
-                                  Text('Date: ${trip.date}', style: AppTextStyles.labelSmall(context)),
+                                  Text('Date: ${trip.date}', style: AppTextStyles.labelSmall(context), overflow: TextOverflow.ellipsis),
                                   const SizedBox(height: 2.0),
                                 ],
                               ),

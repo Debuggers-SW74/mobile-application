@@ -1,20 +1,23 @@
+import 'package:fastporte/common/constants/app.constraints.constant.dart';
 import 'package:fastporte/common/constants/default_data.constant.dart';
+import 'package:fastporte/models/entities/trip.model.dart';
+import 'package:fastporte/services/trip/trip.service.dart';
+import 'package:fastporte/widgets/contracts/driver_resume.widget.dart';
+import 'package:fastporte/widgets/contracts/trip_resume.widget.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../common/constants/app.constraints.constant.dart';
-import '../../../../models/entities/trip.model.dart';
-import '../../../../services/trip/trip.service.dart';
-import '../../../../widgets/contracts/driver_resume.widget.dart';
-import '../../../../widgets/contracts/trip_resume.widget.dart';
+import '../../../../common/constants/app.colors.constant.dart';
+import '../../../../common/constants/button_type.enum.dart';
+import '../../../../widgets/elevated_button/custom.elevated_button.dart';
 
-class HistoryContractsTab extends StatefulWidget {
-  const HistoryContractsTab({super.key});
+class FinishedSupervisorTripsTab extends StatefulWidget {
+  const FinishedSupervisorTripsTab({super.key});
 
   @override
-  State<HistoryContractsTab> createState() => _HistoryContractsTabState();
+  State<FinishedSupervisorTripsTab> createState() => _FinishedSupervisorTripsTabState();
 }
 
-class _HistoryContractsTabState extends State<HistoryContractsTab> {
+class _FinishedSupervisorTripsTabState extends State<FinishedSupervisorTripsTab> {
 
   final ScrollController _scrollController = ScrollController();
   final TripService _tripService = TripService();
@@ -24,7 +27,7 @@ class _HistoryContractsTabState extends State<HistoryContractsTab> {
   void initState() {
     super.initState();
 
-    _futureTrips = _tripService.getTripsByDriverIdAndStatusId(DefaultData.FINISHED_STATUS_ID);
+    _futureTrips = _tripService.getTripsBySupervisorIdAndStatusId(DefaultData.FINISHED_STATUS_ID);
   }
 
   @override
@@ -69,6 +72,10 @@ class _HistoryContractsTabState extends State<HistoryContractsTab> {
                       return TripResume(
                         userResume: DriverResume(trip: trip),
                         rowButtons: const Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+
+                          ],
                         ),
                         trip: trip,
                       );

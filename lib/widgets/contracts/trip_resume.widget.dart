@@ -52,6 +52,11 @@ class TripResume extends StatelessWidget {
             title: 'Time: ',
             description: '${trip.startTime ?? ""} - ${trip.endTime ?? ""}'
           ),
+          const SizedBox(height: AppConstrainsts.spacingMedium),
+          CustomDetailRichText(
+              title: 'Status: ',
+              description: trip.status?.replaceAll('_', ' ') ?? ""
+          ),
           const CustomDivider(),
           IntrinsicHeight(
             child: Row(

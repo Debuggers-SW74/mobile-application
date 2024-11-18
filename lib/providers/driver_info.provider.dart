@@ -116,7 +116,9 @@ class DriverInfoProvider with ChangeNotifier {
 
   void clearDriver() async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.remove('driver');
+    prefs.remove(SharedPreferencesKey.DRIVER_ID);
+    prefs.remove(SharedPreferencesKey.DRIVER);
+    prefs.remove(SharedPreferencesKey.TOKEN);
     _driver = null;
     notifyListeners();
   }

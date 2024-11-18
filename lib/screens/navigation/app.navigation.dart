@@ -12,6 +12,11 @@ import 'package:fastporte/screens/driver/main.screen.dart';
 import 'package:fastporte/screens/driver/more/more.screen.dart';
 import 'package:fastporte/screens/driver/notifications/notifications.screen.dart';
 import 'package:fastporte/screens/driver/profile/profile.screen.dart';
+import 'package:fastporte/screens/supervisor/home/home.screen.dart';
+import 'package:fastporte/screens/supervisor/main.scrren.dart';
+import 'package:fastporte/screens/supervisor/profile/profile.screen.dart';
+import 'package:fastporte/screens/supervisor/search/search.screen.dart';
+import 'package:fastporte/screens/supervisor/trips/trips.screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -28,6 +33,12 @@ class AppNavigation {
   static final _clientContractsNavigatorKey = GlobalKey<NavigatorState>();
   static final _clientNotificationsNavigatorKey = GlobalKey<NavigatorState>();
   static final _clientMoreNavigatorKey = GlobalKey<NavigatorState>();
+
+  static final _supervisorHomeNavigatorKey = GlobalKey<NavigatorState>();
+  static final _supervisorTripsNavigatorKey = GlobalKey<NavigatorState>();
+  static final _supervisorSearchNavigatorKey = GlobalKey<NavigatorState>();
+  static final _supervisorNotificationsNavigatorKey = GlobalKey<NavigatorState>();
+  static final _supervisorSupportNavigatorKey = GlobalKey<NavigatorState>();
 
   static final GoRouter router = GoRouter(
     navigatorKey: _rootNavigatorKey,
@@ -57,30 +68,28 @@ class AppNavigation {
                     path: 'type-profile',
                     name: AppRoutes.registerTypeProfile,
                     pageBuilder: (context, state) => MaterialPage(
-                      key: state.pageKey,
-                      child: const SelectTypeProfile(),
-                    ),
-                  routes: [
-                    GoRoute(
-                      path: 'account-information',
-                      name: AppRoutes.registerAccountInformation,
-                      pageBuilder: (context, state) => MaterialPage(
-                        key: state.pageKey,
-                        child: const AccountInformationPage(),
-                      ),
-                      routes: [
-                        GoRoute(
-                          path: 'personal-information',
-                          name: AppRoutes.registerPersonalInformation,
+                          key: state.pageKey,
+                          child: const SelectTypeProfile(),
+                        ),
+                    routes: [
+                      GoRoute(
+                          path: 'account-information',
+                          name: AppRoutes.registerAccountInformation,
                           pageBuilder: (context, state) => MaterialPage(
-                            key: state.pageKey,
-                            child: const PersonalInformationPage(),
-                          ),
-                        )
-                      ]
-                    ),
-                  ]
-                ),
+                                key: state.pageKey,
+                                child: const AccountInformationPage(),
+                              ),
+                          routes: [
+                            GoRoute(
+                              path: 'personal-information',
+                              name: AppRoutes.registerPersonalInformation,
+                              pageBuilder: (context, state) => MaterialPage(
+                                key: state.pageKey,
+                                child: const PersonalInformationPage(),
+                              ),
+                            )
+                          ]),
+                    ]),
               ],
             ),
             GoRoute(
@@ -157,7 +166,7 @@ class AppNavigation {
               GoRoute(
                 path: '/driver/notifications',
                 name: AppRoutes.driverNotifications,
-                builder: (context, state) => const ClientNotificationsScreen(),
+                builder: (context, state) => const ClientNotificationsScreen(userType: 'driver',),
               )
             ],
           ),
@@ -176,6 +185,67 @@ class AppNavigation {
           ),
         ],
       ),
+      StatefulShellRoute.indexedStack(
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state, navigationShell) {
+          return SupervisorMainScreen(navigationShell: navigationShell);
+        },
+        branches: [
+          StatefulShellBranch(
+            navigatorKey: _supervisorHomeNavigatorKey,
+            routes: [
+              GoRoute(
+                path: '/supervisor/home',
+                name: AppRoutes.supervisorHome,
+                builder: (context, state) => const SupervisorHomeScreen(),
+                routes: <RouteBase>[
+                  ..._profileSupervisorRoutes(AppRoutes.supervisorHome),
+                ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: _supervisorSearchNavigatorKey,
+            routes: [
+              GoRoute(
+                path: '/supervisor/search',
+                name: AppRoutes.supervisorSearch,
+                builder: (context, state) => const SupervisorSearchScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: _supervisorTripsNavigatorKey,
+            routes: [
+              GoRoute(
+                path: '/supervisor/trips',
+                name: AppRoutes.supervisorTrips,
+                builder: (context, state) => const SupervisorTripsScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: _supervisorNotificationsNavigatorKey,
+            routes: [
+              GoRoute(
+                path: '/supervisor/notifications',
+                name: AppRoutes.supervisorNotifications,
+                builder: (context, state) => const ClientNotificationsScreen(userType: 'supervisor',),
+              )
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: _supervisorSupportNavigatorKey,
+            routes: [
+              GoRoute(
+                path: '/supervisor/support',
+                name: AppRoutes.supervisorSupport,
+                builder: (context, state) => const ClientMoreScreen(),
+              )
+            ],
+          ),
+        ],
+      )
     ],
   );
 
@@ -193,6 +263,23 @@ class AppNavigation {
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const DriverCurrentTripDataScreen(),
       )
+    ];
+  }
+
+  static List<GoRoute> _profileSupervisorRoutes(String from) {
+    return [
+      GoRoute(
+        path: 'profile',
+        name: '${from}_profile',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => SupervisorProfileScreen(from: from),
+      ),
+      /*GoRoute(
+        path: 'current-trip-data',
+        name: '${from}_current_trip_data',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const DriverCurrentTripDataScreen(),
+      )*/
     ];
   }
 }

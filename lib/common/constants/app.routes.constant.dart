@@ -30,5 +30,18 @@ class AppRoutes {
 
   /* Supervisor routes */
   static const String supervisorHome = 'supervisor-home';
+  static const String supervisorHomeProfile = 'supervisor-home-profile';
+
+  static const String supervisorSearch = 'supervisor-search';
+  static const String supervisorSearchResults = 'supervisor-search-results';
+
+  static const String supervisorTrips = 'supervisor-trips';
+  static const String supervisorNotifications = 'supervisor-notifications';
+
+  static const String supervisorSupport = 'supervisor-support';
+  static const String supervisorMoreProfile = 'supervisor-more-profile';
+
+  static const String supervisorCurrentTripData = 'supervisor-sensor-data';
+
 
 }

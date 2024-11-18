@@ -3,6 +3,7 @@ import 'package:fastporte/common/constants/app.constraints.constant.dart';
 import 'package:fastporte/common/constants/app.routes.constant.dart';
 import 'package:fastporte/common/constants/app.text_styles.constant.dart';
 import 'package:fastporte/providers/driver_info.provider.dart';
+import 'package:fastporte/providers/supervisor_info.provider.dart';
 import 'package:fastporte/services/auth/auth.service.dart';
 import 'package:fastporte/common/constants/button_type.enum.dart';
 import 'package:fastporte/util/validators/input.validators.dart';
@@ -45,8 +46,8 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
 
     //Agregar texto por defecto a los campos email y passowrd
-    _usernameController.text = 'pg666@gm.com';
-    _passwordController.text = 'pgomez';
+    _usernameController.text = 'ramon@comp.com';
+    _passwordController.text = 'Zxcqwe123#';
 
     _usernameFocusNode.addListener(() {
       if (_usernameFocusNode.hasFocus) {
@@ -79,12 +80,25 @@ class _LoginPageState extends State<LoginPage> {
 
       if (loginRole != null && mounted) {
 
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          final driverProvider = Provider.of<DriverInfoProvider>(context, listen: false);
-          driverProvider.fetchDriver();
-        });
+        //WidgetsBinding.instance.addPostFrameCallback((_) {
+          if(loginRole == 'ROLE_DRIVER') {
+            final driverProvider = Provider.of<DriverInfoProvider>(context, listen: false);
+            driverProvider.fetchDriver();
+            context.goNamed(AppRoutes.driverHome);
+          }
+          else if (loginRole == 'ROLE_SUPERVISOR'){
+            final supervisorProvider = Provider.of<SupervisorInfoProvider>(context, listen: false);
+            supervisorProvider.fetchSupervisor();
+            context.goNamed(AppRoutes.supervisorHome);
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Failed to fetch user'),
+              ),
+            );
+          }
+        //});
 
-        loginRole == 'ROLE_DRIVER' ? context.goNamed(AppRoutes.driverHome) : context.goNamed(AppRoutes.supervisorHome);
       } else if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

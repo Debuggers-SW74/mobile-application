@@ -1,21 +1,23 @@
+import 'package:fastporte/common/constants/app.constraints.constant.dart';
+import 'package:fastporte/common/constants/button_type.enum.dart';
 import 'package:fastporte/common/constants/default_data.constant.dart';
+import 'package:fastporte/models/entities/trip.model.dart';
+import 'package:fastporte/services/trip/trip.service.dart';
+import 'package:fastporte/widgets/contracts/driver_resume.widget.dart';
+import 'package:fastporte/widgets/contracts/trip_resume.widget.dart';
+import 'package:fastporte/widgets/elevated_button/custom.elevated_button.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../common/constants/app.constraints.constant.dart';
-import '../../../../models/entities/trip.model.dart';
-import '../../../../services/trip/trip.service.dart';
-import '../../../../widgets/contracts/driver_resume.widget.dart';
-import '../../../../widgets/contracts/trip_resume.widget.dart';
+import '../../../../common/constants/app.colors.constant.dart';
 
-class HistoryContractsTab extends StatefulWidget {
-  const HistoryContractsTab({super.key});
+class CancelledSupervisorTripsTab extends StatefulWidget {
+  const CancelledSupervisorTripsTab({super.key});
 
   @override
-  State<HistoryContractsTab> createState() => _HistoryContractsTabState();
+  State<CancelledSupervisorTripsTab> createState() => _CancelledSupervisorTripsTabState();
 }
 
-class _HistoryContractsTabState extends State<HistoryContractsTab> {
-
+class _CancelledSupervisorTripsTabState extends State<CancelledSupervisorTripsTab> {
   final ScrollController _scrollController = ScrollController();
   final TripService _tripService = TripService();
   late Future<List<Trip>> _futureTrips;
@@ -24,7 +26,8 @@ class _HistoryContractsTabState extends State<HistoryContractsTab> {
   void initState() {
     super.initState();
 
-    _futureTrips = _tripService.getTripsByDriverIdAndStatusId(DefaultData.FINISHED_STATUS_ID);
+    _futureTrips = _tripService.getTripsBySupervisorIdAndStatusId(DefaultData.CANCELED_STATUS_ID);
+
   }
 
   @override
@@ -40,7 +43,7 @@ class _HistoryContractsTabState extends State<HistoryContractsTab> {
         children: [
           const Center(
             child: Text(
-              'Trips finished',
+              'Cancelled trips',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
@@ -56,7 +59,7 @@ class _HistoryContractsTabState extends State<HistoryContractsTab> {
               } else if (snapshot.hasError) {
                 return Center(child: Text('Error: ${snapshot.error}'));
               } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return const Center(child: Text('No finished trips found'));
+                return const Center(child: Text('No cancelled trips found'));
               } else {
                 List<Trip> trips = snapshot.data!.toList();
 
@@ -69,6 +72,9 @@ class _HistoryContractsTabState extends State<HistoryContractsTab> {
                       return TripResume(
                         userResume: DriverResume(trip: trip),
                         rowButtons: const Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                          ],
                         ),
                         trip: trip,
                       );

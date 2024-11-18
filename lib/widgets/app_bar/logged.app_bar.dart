@@ -1,6 +1,7 @@
 import 'package:fastporte/common/constants/app.constraints.constant.dart';
 import 'package:fastporte/common/constants/app.routes.constant.dart';
 import 'package:fastporte/providers/driver_info.provider.dart';
+import 'package:fastporte/providers/supervisor_info.provider.dart';
 import 'package:fastporte/util/debug/print_navigation_stack.dart';
 import 'package:flutter/material.dart';
 import 'package:fastporte/common/constants/app.colors.constant.dart';
@@ -109,6 +110,7 @@ class LoggedAppBar extends StatelessWidget implements PreferredSizeWidget {
     switch (item) {
       case 0:
         Provider.of<DriverInfoProvider>(context, listen: false).clearDriver();
+        Provider.of<SupervisorInfoProvider>(context, listen: false).clearSupervisor();
         context.goNamed(AppRoutes.login);
         break;
       case 1:
