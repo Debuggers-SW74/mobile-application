@@ -1,14 +1,17 @@
+import 'package:fastporte/common/constants/default_data.constant.dart';
+import 'package:fastporte/models/entities/trip.model.dart';
 import 'package:flutter/material.dart';
 
 import '../../common/constants/app.constraints.constant.dart';
 import '../text/custom_detail.rich_text.dart';
 
 class DriverResume extends StatelessWidget {
-  const DriverResume({super.key});
+  const DriverResume({super.key, required this.trip});
+  final Trip trip;
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const Text(
@@ -22,10 +25,10 @@ class DriverResume extends StatelessWidget {
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            CircleAvatar(
+            const CircleAvatar(
               radius: 30,
               backgroundImage: NetworkImage(
-                'https://www.shutterstock.com/image-photo/cellphone-smile-portrait-man-studio-260nw-2469535563.jpg',
+                DefaultData.DEFAULT_PROFILE_IMAGE
                 //widget.requestService.driver.profilePicture),
               ),
             ),
@@ -36,13 +39,12 @@ class DriverResume extends StatelessWidget {
                 children: [
                   CustomDetailRichText(
                     title: '',
-                    description: 'John Doe', //widget.requestService.driver.name,
+                    description: trip.driverName! ?? "",
                   ),
                   const SizedBox(height: AppConstrainsts.spacingSmall),
                   CustomDetailRichText(
                     title: 'Cel.: ',
-                    description:
-                    '987654321', //widget.requestService.driver.phoneNumber,
+                    description: trip.driverPhoneNumber ?? "",
                   ),
                 ],
               ),

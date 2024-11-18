@@ -1,3 +1,4 @@
+import 'package:fastporte/models/entities/trip.model.dart';
 import 'package:fastporte/widgets/contracts/driver_resume.widget.dart';
 import 'package:flutter/material.dart';
 
@@ -8,10 +9,11 @@ import '../divider/custom.divider.dart';
 import '../text/custom_detail.rich_text.dart';
 
 class TripResume extends StatelessWidget {
-  const TripResume({super.key, required this.userResume, required this.rowButtons});
+  const TripResume({super.key, required this.userResume, required this.rowButtons, required this.trip});
 
   final Widget userResume;
   final Row rowButtons;
+  final Trip trip;
 
   @override
   Widget build(BuildContext context) {
@@ -28,28 +30,27 @@ class TripResume extends StatelessWidget {
         children: [
           CustomDetailRichText(
             title: 'From: ',
-            description: 'Avenida Arica 601 Lima 05, Breña 15083', //widget.requestService.origin,
+            description: trip.origin ?? "",
           ),
           const SizedBox(height: AppConstrainsts.spacingMedium),
           CustomDetailRichText(
             title: 'To: ',
-            description: 'Ciudad de Caral, Lomas de Lachay', //widget.requestService.destination,
+            description: trip.destination ?? "",
           ),
           const SizedBox(height: AppConstrainsts.spacingMedium),
           CustomDetailRichText(
             title: 'Service Type: ',
-            description: 'Moving', //widget.requestService.typeOfService,
+            description: trip.type ?? "",
           ),
           const SizedBox(height: AppConstrainsts.spacingMedium),
           CustomDetailRichText(
             title: 'Date: ',
-            description: '21/10/2022', //widget.requestService.date,
+            description: trip.date ?? ""
           ),
           const SizedBox(height: AppConstrainsts.spacingMedium),
           CustomDetailRichText(
             title: 'Time: ',
-            description: '09:00 - 15:00',
-            //'${widget.requestService.startTime} - ${widget.requestService.endTime}',
+            description: '${trip.startTime ?? ""} - ${trip.endTime ?? ""}'
           ),
           const CustomDivider(),
           IntrinsicHeight(
@@ -77,7 +78,7 @@ class TripResume extends StatelessWidget {
                         child: Container(
                           alignment: Alignment.center,
                           child: Text(
-                            'S/. 123', //${widget.requestService.amount}',
+                            trip.amount ?? "",
                             style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w900,
