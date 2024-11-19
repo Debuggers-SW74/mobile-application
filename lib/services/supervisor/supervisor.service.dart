@@ -7,6 +7,7 @@ import 'package:fastporte/services/supervisor/update_supervisor.model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../../common/constants/environment_url.constant.dart';
+import '../../models/entities/driver.dart';
 
 class SupervisorService {
   final String baseUrl = EnvironmentConstants.CURRENT_ENV_URL;
@@ -111,6 +112,49 @@ class SupervisorService {
     } catch (e) {
       print('-> Error: $e');
       return RegisterUserResponse(success: false, message: 'Error registering supervisor: $e');
+    }
+  }
+
+  Future<List<Driver>> getDriversBySupervisorId() async {
+    try {
+      // Obtén la instancia de SharedPreferences
+      _prefs = await SharedPreferences.getInstance();
+      final token = _prefs.getString(SharedPreferencesKey.TOKEN);
+      final supervisorId = _prefs.getInt(SharedPreferencesKey.SUPERVISOR_ID);
+
+      // Verifica si el token existe
+      if (token == null || token.isEmpty) {
+        throw Exception('Token not found');
+      }
+
+      // Realiza la solicitud HTTP GET con el token de autorización
+      final response = await http.get(
+        Uri.parse('$baseUrl/supervisors/$supervisorId/drivers'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token', // Token de autorización
+        },
+      );
+      print('Url: $baseUrl/supervisors/$supervisorId/drivers');
+      print('-> Response: ${response.statusCode}');
+
+      print('-> Response: ${response.body}');
+      // Verifica el código de estado de la respuesta
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        List<Driver> drivers = data.map<Driver>((driver) => Driver.fromJson(driver)).toList();
+        return drivers;
+
+      } else if (response.statusCode == 204) {
+        return [];
+
+      } else {
+        throw Exception('Failed to fetch drivers: ${response.body}');
+
+      }
+    } catch (e) {
+      print('-> Error: $e');
+      return [];
     }
   }
 
