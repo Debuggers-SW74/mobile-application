@@ -13,16 +13,16 @@ import '../../../models/entities/trip.model.dart';
 import '../../../widgets/app_bar/logged.app_bar.dart';
 import '../../../models/entities/threshold.model.dart' as th;
 
-class DriverCurrentTripDataScreen extends StatefulWidget {
-  const DriverCurrentTripDataScreen({super.key});
+class SupervisorCurrentTripDataScreen extends StatefulWidget {
+  const SupervisorCurrentTripDataScreen({super.key});
 
   @override
-  State<DriverCurrentTripDataScreen> createState() =>
-      _DriverCurrentTripDataScreenState();
+  State<SupervisorCurrentTripDataScreen> createState() =>
+      _SupervisorCurrentTripDataScreenState();
 }
 
-class _DriverCurrentTripDataScreenState
-    extends State<DriverCurrentTripDataScreen> {
+class _SupervisorCurrentTripDataScreenState
+    extends State<SupervisorCurrentTripDataScreen> {
   late bool _activeTripExists = true;
 
   final ThresholdService _thresholdService = ThresholdService();
@@ -48,7 +48,7 @@ class _DriverCurrentTripDataScreenState
   void _initializeData() async {
     try {
       // Obtener los viajes activos
-      List<Trip> trips = await _tripService.getTripsByDriverIdAndStatusId(2);
+      List<Trip> trips = await _tripService.getTripsBySupervisorIdAndStatusId(2);
 
       if (trips.isEmpty) {
         setState(() {
@@ -59,7 +59,7 @@ class _DriverCurrentTripDataScreenState
 
         // Obtener los thresholds para el viaje activo
         List<th.Threshold> thresholds =
-        await _thresholdService.getByTripId(_activeTrip.tripId!);
+            await _thresholdService.getByTripId(_activeTrip.tripId!);
 
         if (thresholds.isNotEmpty) {
           if (mounted) {
@@ -80,7 +80,6 @@ class _DriverCurrentTripDataScreenState
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: const LoggedAppBar(
         title: 'Current Trip Data',
@@ -116,7 +115,7 @@ class _DriverCurrentTripDataScreenState
                   // Gráfico de lineas para temperatura
                   SizedBox(
                     height: 400,
-                    child: TemperatureChart(tripId: _activeTrip.tripId ?? 0),
+                    child: TemperatureChart(tripId: _activeTrip.tripId ?? 0,),
                   ),
 
                   // Gráfico de barras para presión de gas
@@ -149,7 +148,6 @@ class _DriverCurrentTripDataScreenState
                                   children: [
                                     Flexible(
                                       child: CustomTextFormField(
-                                        readOnly: true,
                                         labelText: minThreshold.toString(),
                                         keyboardType: TextInputType.number,
                                       ),
@@ -158,7 +156,6 @@ class _DriverCurrentTripDataScreenState
                                     // Campo de entrada para Max
                                     Flexible(
                                       child: CustomTextFormField(
-                                        readOnly: true,
                                         labelText: maxThreshold.toString(),
                                         keyboardType: TextInputType.number,
                                       ),
@@ -190,9 +187,10 @@ class _DriverCurrentTripDataScreenState
 
                                         // Busca el Threshold correspondiente en la lista
                                         _thresholdlist.then((thresholds) {
-                                          final threshold = thresholds.firstWhere(
-                                                (t) => t.sensorType == _selectedOption
-                                          );
+                                          final threshold =
+                                              thresholds.firstWhere((t) =>
+                                                  t.sensorType ==
+                                                  _selectedOption);
 
                                           // Actualiza los valores de min y max
                                           minThreshold = threshold.minThreshold;
@@ -210,6 +208,14 @@ class _DriverCurrentTripDataScreenState
                       const SizedBox(height: 16),
                     ],
                   ),
+
+                  // Botón de enviar alerta
+                  Center(
+                      child: CustomElevatedButton(
+                    onPressed: _sendAlert,
+                    text: 'Send Alert',
+                    type: ButtonType.error,
+                  )),
                 ],
               ),
             ),

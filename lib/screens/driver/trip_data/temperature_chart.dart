@@ -1,74 +1,154 @@
+import 'dart:async'; // Para usar Timer
+import 'package:fastporte/models/entities/sensor_data.model.dart';
+import 'package:fastporte/services/sensor-data/sensor-data.service.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
-class TemperatureChart extends StatelessWidget {
-  const TemperatureChart({super.key});
+class TemperatureChart extends StatefulWidget {
+  final int tripId;
+
+  const TemperatureChart({super.key, required this.tripId});
+
+  @override
+  State<TemperatureChart> createState() => _TemperatureChart();
+}
+
+class _TemperatureChart extends State<TemperatureChart> {
+  final SensorDataService _sensorDataService = SensorDataService();
+  late Timer _timer; // Timer para actualizaciones automáticas
+
+  List<FlSpot> _temperatureSpots = [];
+  List<FlSpot> _humiditySpots = [];
+  List<String> _xLabels = []; // Etiquetas dinámicas del eje X
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeData(); // Cargar datos iniciales
+    _startAutoRefresh(); // Iniciar actualizaciones automáticas cada 30 segundos
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel(); // Cancelar el Timer cuando el widget se destruye
+    super.dispose();
+  }
+
+  // Función para iniciar actualizaciones automáticas cada 30 segundos
+  void _startAutoRefresh() {
+    _timer = Timer.periodic(const Duration(seconds: 30), (timer) {
+      _initializeData();
+    });
+  }
+
+  // Función para cargar datos de temperatura y humedad
+  void _initializeData() async {
+    try {
+      // Obtener datos del servicio
+      List<SensorData> sensorData = await _sensorDataService.getByTripId(widget.tripId);
+
+      if (sensorData.isNotEmpty) {
+        setState(() {
+          _temperatureSpots = sensorData
+              .asMap()
+              .entries
+              .map((entry) => FlSpot(
+            entry.key.toDouble(), // Índice escalado
+            (entry.value.temperatureValue ?? 0).toDouble(), // Manejo de nulos
+          ))
+              .toList();
+
+          _humiditySpots = sensorData
+              .asMap()
+              .entries
+              .map((entry) => FlSpot(
+            entry.key.toDouble(),
+            (entry.value.humidityValue ?? 0).toDouble(),
+          ))
+              .toList();
+
+          _xLabels = sensorData
+              .map((data) {
+            try {
+              // Convertir el timestamp en un formato legible
+              final parsedTimestamp = DateTime.parse(data.timestamp ?? '');
+              return TimeOfDay.fromDateTime(parsedTimestamp).format(context);
+            } catch (e) {
+              // Si hay un error en el timestamp, usar la hora actual como fallback
+              return TimeOfDay.fromDateTime(DateTime.now()).format(context);
+            }
+          })
+              .take(10)
+              .toList();
+        });
+      }
+    } catch (e) {
+      print('Error al cargar datos: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Título del gráfico
+        // Encabezados del gráfico
         Padding(
           padding: const EdgeInsets.only(bottom: 8.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: const [
               Text(
-                "Temperature: 16°C", // Valor actual de la temperatura
+                "Temperature: 16°C", // Ejemplo de encabezado de temperatura
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               Text(
-                "Humidity: Dry", // Valor actual de la humedad
+                "Humidity: Dry", // Ejemplo de encabezado de humedad
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ],
           ),
         ),
+        // Contenedor del gráfico
         Container(
           height: 300,
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: LineChart(
             LineChartData(
-              maxX: 16,
-              minX: 9,
               lineBarsData: [
-                // Línea de temperatura
+                // Línea para los datos de temperatura
                 LineChartBarData(
                   isCurved: true,
                   color: Colors.red,
-                  spots: [
-                    const FlSpot(9, 24),
-                    const FlSpot(10, 26),
-                    const FlSpot(11, 28),
-                    const FlSpot(12, 30),
-                    const FlSpot(13, 31),
-                    const FlSpot(14, 29),
-                    const FlSpot(15, 27),
-                    const FlSpot(16, 25),
-                  ],
+                  spots: _temperatureSpots, // Usar los datos dinámicos de temperatura
                   dotData: const FlDotData(show: false),
                   barWidth: 3,
                 ),
-                // Línea de humedad
+                // Línea para los datos de humedad
                 LineChartBarData(
                   isCurved: true,
                   color: Colors.blue,
-                  spots: [
-                    const FlSpot(9, 55),
-                    const FlSpot(10, 50),
-                    const FlSpot(11, 45),
-                    const FlSpot(12, 40),
-                    const FlSpot(13, 35),
-                    const FlSpot(14, 30),
-                    const FlSpot(15, 25),
-                    const FlSpot(16, 20),
-                  ],
+                  spots: _humiditySpots, // Usar los datos dinámicos de humedad
                   dotData: const FlDotData(show: false),
                   barWidth: 3,
                 ),
               ],
               titlesData: FlTitlesData(
+                bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    reservedSize: 40,
+                    getTitlesWidget: (value, meta) {
+                      final index = value.toInt();
+                      if (index % 2 == 0 && index >= 0 && index < _xLabels.length) {
+                        return Text(
+                          _xLabels[index],
+                          style: const TextStyle(fontSize: 12),
+                        );
+                      }
+                      return const Text('');
+                    },
+                  ),
+                ),
                 leftTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
@@ -87,20 +167,9 @@ class TemperatureChart extends StatelessWidget {
                     },
                   ),
                 ),
-                bottomTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    reservedSize: 40,
-                    interval: 2, // Mostrar etiquetas cada 6 horas
-                    getTitlesWidget: (value, meta) {
-                      return Text('${value.toInt()}:00', style: const TextStyle(fontSize: 12));
-                    },
-                  ),
-                ),
-                topTitles: const AxisTitles(
-                  sideTitles: SideTitles(showTitles: false),
-                ),
               ),
+              minY: 0, // Mínimo del eje Y
+              maxY: 100,
               gridData: const FlGridData(show: true),
               borderData: FlBorderData(show: true),
             ),

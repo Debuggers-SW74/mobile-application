@@ -12,6 +12,7 @@ import 'package:fastporte/screens/driver/main.screen.dart';
 import 'package:fastporte/screens/driver/more/more.screen.dart';
 import 'package:fastporte/screens/driver/notifications/notifications.screen.dart';
 import 'package:fastporte/screens/driver/profile/profile.screen.dart';
+import 'package:fastporte/screens/supervisor/trip_data/home.current_trip_data.screen.dart';
 import 'package:fastporte/screens/supervisor/home/home.screen.dart';
 import 'package:fastporte/screens/supervisor/main.scrren.dart';
 import 'package:fastporte/screens/supervisor/profile/profile.screen.dart';
@@ -274,12 +275,12 @@ class AppNavigation {
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => SupervisorProfileScreen(from: from),
       ),
-      /*GoRoute(
+      GoRoute(
         path: 'current-trip-data',
         name: '${from}_current_trip_data',
         parentNavigatorKey: _rootNavigatorKey,
-        builder: (context, state) => const DriverCurrentTripDataScreen(),
-      )*/
+        builder: (context, state) => const SupervisorCurrentTripDataScreen(),
+      )
     ];
   }
 }
