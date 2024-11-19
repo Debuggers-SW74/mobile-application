@@ -3,12 +3,9 @@ import 'package:fastporte/screens/driver/trip_data/pressure_chart.dart';
 import 'package:fastporte/screens/driver/trip_data/temperature_chart.dart';
 import 'package:fastporte/services/threshold/threshold.service.dart';
 import 'package:fastporte/services/trip/trip.service.dart';
-import 'package:fastporte/widgets/elevated_button/custom.elevated_button.dart';
 import 'package:fastporte/widgets/screen.template.dart';
-import 'package:fastporte/widgets/text_field/custom.text_form_field.dart';
 import 'package:flutter/material.dart';
 
-import '../../../common/constants/button_type.enum.dart';
 import '../../../models/entities/trip.model.dart';
 import '../../../widgets/app_bar/logged.app_bar.dart';
 import '../../../models/entities/threshold.model.dart' as th;
@@ -23,21 +20,16 @@ class DriverCurrentTripDataScreen extends StatefulWidget {
 
 class _DriverCurrentTripDataScreenState
     extends State<DriverCurrentTripDataScreen> {
-  late bool _activeTripExists = true;
+  bool _activeTripExists = false;
 
   final ThresholdService _thresholdService = ThresholdService();
   final TripService _tripService = TripService();
 
-  // Variable para almacenar la opción seleccionada
   String? _selectedOption;
   double? minThreshold = 0.0;
   double? maxThreshold = 0.0;
   late Future<List<th.Threshold>> _thresholdlist;
-  late Trip _activeTrip;
-
-  void _sendAlert() {
-    print("¡Alerta enviada!");
-  }
+  late Future<Trip> _activeTrip;
 
   @override
   void initState() {
@@ -47,7 +39,6 @@ class _DriverCurrentTripDataScreenState
 
   void _initializeData() async {
     try {
-      // Obtener los viajes activos
       List<Trip> trips = await _tripService.getTripsByDriverIdAndStatusId(2);
 
       if (trips.isEmpty) {
@@ -55,22 +46,20 @@ class _DriverCurrentTripDataScreenState
           _activeTripExists = false;
         });
       } else {
-        _activeTrip = trips[0];
+        final trip = trips[0];
+        _activeTrip = Future.value(trip);
 
-        // Obtener los thresholds para el viaje activo
         List<th.Threshold> thresholds =
-        await _thresholdService.getByTripId(_activeTrip.tripId!);
+            await _thresholdService.getByTripId(trip.tripId!);
 
         if (thresholds.isNotEmpty) {
-          if (mounted) {
-            setState(() {
-              _activeTripExists = true;
-              _selectedOption = thresholds[0].sensorType;
-              minThreshold = thresholds[0].minThreshold;
-              maxThreshold = thresholds[0].maxThreshold;
-              _thresholdlist = Future.value(thresholds);
-            });
-          }
+          setState(() {
+            _activeTripExists = true;
+            _selectedOption = thresholds[0].sensorType;
+            minThreshold = thresholds[0].minThreshold;
+            maxThreshold = thresholds[0].maxThreshold;
+            _thresholdlist = Future.value(thresholds);
+          });
         }
       }
     } catch (e) {
@@ -78,9 +67,12 @@ class _DriverCurrentTripDataScreenState
     }
   }
 
+  void _sendAlert() {
+    print("¡Alerta enviada!");
+  }
+
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: const LoggedAppBar(
         title: 'Current Trip Data',
@@ -91,130 +83,124 @@ class _DriverCurrentTripDataScreenState
   }
 
   Widget _activeTripData() {
-    final List<String> _options = [
-      "SENSOR_GAS",
-      "SENSOR_TEMPERATURE",
-      "SENSOR_PRESSURE",
-      "SENSOR_HUMIDITY"
-    ];
+    return FutureBuilder<Trip>(
+      future: _activeTrip,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (snapshot.hasData) {
+          final trip = snapshot.data!;
+          return ScreenTemplate(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Sensor information',
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 20),
 
-    return Container(
-        padding: const EdgeInsets.all(4.0),
-        child: ScreenTemplate(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Sensor information',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 20),
+                    // Line chart for temperature
+                    SizedBox(
+                      height: 400,
+                      child: TemperatureChart(tripId: trip.tripId!),
+                    ),
 
-                  // Gráfico de lineas para temperatura
-                  SizedBox(
-                    height: 400,
-                    child: TemperatureChart(tripId: _activeTrip.tripId ?? 0),
-                  ),
+                    // Bar chart for pressure
+                    SizedBox(
+                      height: 200,
+                      child: PressureChart(tripId: trip.tripId!),
+                    ),
 
-                  // Gráfico de barras para presión de gas
-                  const SizedBox(
-                    height: 200,
-                    child: PressureChart(),
-                  ),
-
-                  Column(
-                    children: [
-                      // Expansion Tile para mostrar/ocultar contenido
-                      ExpansionTile(
-                        title: const Text(
-                          "Threshold Setup",
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                        children: [
-                          // Contenido interno del ExpansionTile
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 16, horizontal: 8),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                // Campo de entrada para Min
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Flexible(
-                                      child: CustomTextFormField(
-                                        readOnly: true,
-                                        labelText: minThreshold.toString(),
-                                        keyboardType: TextInputType.number,
+                    // Additional widgets (e.g., Threshold Setup)
+                    Column(
+                      children: [
+                        ExpansionTile(
+                          title: const Text(
+                            "Threshold Setup",
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 16, horizontal: 8),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Flexible(
+                                        child: TextField(
+                                          decoration: InputDecoration(
+                                            labelText: minThreshold.toString(),
+                                          ),
+                                          readOnly: true,
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(width: 16),
-                                    // Campo de entrada para Max
-                                    Flexible(
-                                      child: CustomTextFormField(
-                                        readOnly: true,
-                                        labelText: maxThreshold.toString(),
-                                        keyboardType: TextInputType.number,
+                                      const SizedBox(width: 16),
+                                      Flexible(
+                                        child: TextField(
+                                          decoration: InputDecoration(
+                                            labelText: maxThreshold.toString(),
+                                          ),
+                                          readOnly: true,
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 16),
-                                Container(
-                                  width: double.infinity,
-                                  margin: const EdgeInsets.only(
-                                    top: 0,
-                                    left: 0,
-                                    right: 0,
-                                    bottom: 10,
+                                    ],
                                   ),
-                                  child: DropdownButton<String>(
+                                  const SizedBox(height: 16),
+                                  DropdownButton<String>(
                                     value: _selectedOption,
                                     hint: const Text("Select an option"),
-                                    items: _options.map((String option) {
-                                      return DropdownMenuItem<String>(
-                                        value: option,
-                                        child: Text(option),
-                                      );
-                                    }).toList(),
-                                    onChanged: (String? newValue) {
-                                      setState(() {
-                                        _selectedOption = newValue;
-                                        print(_selectedOption);
+                                    items: ["SENSOR_GAS", "SENSOR_TEMPERATURE"]
+                                        .map((option) =>
+                                            DropdownMenuItem<String>(
+                                              value: option,
+                                              child: Text(option),
+                                            ))
+                                        .toList(),
+                                    onChanged: (value) async {
+                                      if (value != null) {
+                                        setState(() {
+                                          _selectedOption = value;
+                                        });
 
-                                        // Busca el Threshold correspondiente en la lista
-                                        _thresholdlist.then((thresholds) {
-                                          final threshold = thresholds.firstWhere(
-                                                (t) => t.sensorType == _selectedOption
-                                          );
-
-                                          // Actualiza los valores de min y max
+                                        final thresholds = await _thresholdlist;
+                                        final threshold = thresholds.firstWhere(
+                                            (t) => t.sensorType == value);
+                                        setState(() {
                                           minThreshold = threshold.minThreshold;
                                           maxThreshold = threshold.maxThreshold;
                                         });
-                                      });
+                                      }
                                     },
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                    ],
-                  ),
-                ],
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
-        ));
+            ],
+          );
+        } else {
+          return const Center(child: Text('No active trip found.'));
+        }
+      },
+    );
   }
 
   ScreenTemplate _noActiveTripData() {

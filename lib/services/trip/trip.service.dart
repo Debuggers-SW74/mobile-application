@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:fastporte/common/constants/default_data.constant.dart';
 import 'package:fastporte/common/constants/shared_preferences_keys.constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;

@@ -14,14 +14,14 @@ class DriverResume extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
+        const Text(
           'Driver data',
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w500,
           ),
         ),
-        SizedBox(height: AppConstrainsts.spacingSmall),
+        const SizedBox(height: AppConstrainsts.spacingSmall),
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -32,7 +32,7 @@ class DriverResume extends StatelessWidget {
                 //widget.requestService.driver.profilePicture),
               ),
             ),
-            SizedBox(width: AppConstrainsts.spacingMedium),
+            const SizedBox(width: AppConstrainsts.spacingMedium),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,7 +41,7 @@ class DriverResume extends StatelessWidget {
                     title: '',
                     description: trip.driverName! ?? "",
                   ),
-                  SizedBox(height: AppConstrainsts.spacingSmall),
+                  const SizedBox(height: AppConstrainsts.spacingSmall),
                   CustomDetailRichText(
                     title: 'Cel.: ',
                     description: trip.driverPhoneNumber ?? "",

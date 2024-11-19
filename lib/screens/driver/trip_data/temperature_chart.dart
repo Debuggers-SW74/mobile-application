@@ -21,6 +21,8 @@ class _TemperatureChart extends State<TemperatureChart> {
   List<FlSpot> _humiditySpots = [];
   List<String> _xLabels = []; // Etiquetas dinámicas del eje X
 
+  List<SensorData>? sensorData;
+
   @override
   void initState() {
     super.initState();
@@ -45,39 +47,46 @@ class _TemperatureChart extends State<TemperatureChart> {
   void _initializeData() async {
     try {
       // Obtener datos del servicio
-      List<SensorData> sensorData = await _sensorDataService.getByTripId(widget.tripId);
+      List<SensorData> sensorData =
+          await _sensorDataService.getByTripId(widget.tripId);
 
       if (sensorData.isNotEmpty) {
+        this.sensorData = sensorData;
+
+        print('Datos cargados: ${sensorData.length} registros');
+
         setState(() {
           _temperatureSpots = sensorData
               .asMap()
               .entries
               .map((entry) => FlSpot(
-            entry.key.toDouble(), // Índice escalado
-            (entry.value.temperatureValue ?? 0).toDouble(), // Manejo de nulos
-          ))
+                    entry.key.toDouble(), // Índice escalado
+                    (entry.value.temperatureValue ?? 0)
+                        .toDouble(), // Manejo de nulos
+                  ))
               .toList();
 
           _humiditySpots = sensorData
               .asMap()
               .entries
               .map((entry) => FlSpot(
-            entry.key.toDouble(),
-            (entry.value.humidityValue ?? 0).toDouble(),
-          ))
+                    entry.key.toDouble(),
+                    (entry.value.humidityValue ?? 0).toDouble(),
+                  ))
               .toList();
 
           _xLabels = sensorData
               .map((data) {
-            try {
-              // Convertir el timestamp en un formato legible
-              final parsedTimestamp = DateTime.parse(data.timestamp ?? '');
-              return TimeOfDay.fromDateTime(parsedTimestamp).format(context);
-            } catch (e) {
-              // Si hay un error en el timestamp, usar la hora actual como fallback
-              return TimeOfDay.fromDateTime(DateTime.now()).format(context);
-            }
-          })
+                try {
+                  // Convertir el timestamp en un formato legible
+                  final parsedTimestamp = DateTime.parse(data.timestamp ?? '');
+                  return TimeOfDay.fromDateTime(parsedTimestamp)
+                      .format(context);
+                } catch (e) {
+                  // Si hay un error en el timestamp, usar la hora actual como fallback
+                  return TimeOfDay.fromDateTime(DateTime.now()).format(context);
+                }
+              })
               .take(10)
               .toList();
         });
@@ -93,16 +102,16 @@ class _TemperatureChart extends State<TemperatureChart> {
       children: [
         // Encabezados del gráfico
         Padding(
-          padding: const EdgeInsets.only(bottom: 8.0),
+          padding: EdgeInsets.only(bottom: 8.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
+            children: [
               Text(
-                "Temperature: 16°C", // Ejemplo de encabezado de temperatura
+                "Temperature: ${sensorData?[sensorData!.length - 1].temperatureValue} C", // Ejemplo de encabezado de temperatura
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               Text(
-                "Humidity: Dry", // Ejemplo de encabezado de humedad
+                "Humidity: ${sensorData?[sensorData!.length - 1].humidityValue}", // Ejemplo de encabezado de humedad
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ],
@@ -119,7 +128,8 @@ class _TemperatureChart extends State<TemperatureChart> {
                 LineChartBarData(
                   isCurved: true,
                   color: Colors.red,
-                  spots: _temperatureSpots, // Usar los datos dinámicos de temperatura
+                  spots:
+                      _temperatureSpots, // Usar los datos dinámicos de temperatura
                   dotData: const FlDotData(show: false),
                   barWidth: 3,
                 ),
@@ -139,7 +149,9 @@ class _TemperatureChart extends State<TemperatureChart> {
                     reservedSize: 40,
                     getTitlesWidget: (value, meta) {
                       final index = value.toInt();
-                      if (index % 2 == 0 && index >= 0 && index < _xLabels.length) {
+                      if (index % 2 == 0 &&
+                          index >= 0 &&
+                          index < _xLabels.length) {
                         return Text(
                           _xLabels[index],
                           style: const TextStyle(fontSize: 12),
@@ -154,7 +166,8 @@ class _TemperatureChart extends State<TemperatureChart> {
                     showTitles: true,
                     reservedSize: 40,
                     getTitlesWidget: (value, meta) {
-                      return Text('${value.toInt()}°C'); // Eje izquierdo: Temperatura
+                      return Text(
+                          '${value.toInt()}°C'); // Eje izquierdo: Temperatura
                     },
                   ),
                 ),

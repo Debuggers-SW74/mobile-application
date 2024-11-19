@@ -2,17 +2,17 @@ class SensorData {
   int? tripId;
   int? temperatureValue;
   int? humidityValue;
-  bool? pressureValue;
+  int? pressureValue;
   int? gasValue;
   String? timestamp;
 
   SensorData(
       {this.tripId,
-        this.temperatureValue,
-        this.humidityValue,
-        this.pressureValue,
-        this.gasValue,
-        this.timestamp});
+      this.temperatureValue,
+      this.humidityValue,
+      this.pressureValue,
+      this.gasValue,
+      this.timestamp});
 
   factory SensorData.fromJson(Map<String, dynamic> json) {
     return SensorData(

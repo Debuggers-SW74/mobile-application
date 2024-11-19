@@ -22,7 +22,7 @@ class SensorDataService {
 
       // Realiza la solicitud HTTP GET con el token de autorización
       final response = await http.get(
-        Uri.parse('$baseUrl/thresholds/trip/$tripId'),
+        Uri.parse('$baseUrl/sensor-data/trip/$tripId'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token', // Token de autorización

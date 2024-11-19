@@ -6,17 +6,14 @@ import 'package:fastporte/common/constants/default_data.constant.dart';
 import 'package:fastporte/providers/driver_info.provider.dart';
 import 'package:fastporte/models/entities/driver.dart';
 
-import 'package:fastporte/services/driver/driver.service.dart';
 import 'package:fastporte/widgets/app_bar/logged.app_bar.dart';
 import 'package:fastporte/widgets/elevated_button/custom.elevated_button.dart';
 import 'package:fastporte/widgets/screen.template.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:logger/logger.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
 
-import '../../../providers/driver_info.provider.dart';
 import '../../../services/driver/update_driver.model.dart';
 import '../../../util/formatters/first_name.formatter.dart';
 import '../../../util/formatters/last_names.formatter.dart';
