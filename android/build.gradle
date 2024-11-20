@@ -1,3 +1,14 @@
+buildscript {
+    repositories {
+        google() // Asegúrate de tener este repositorio
+        mavenCentral() // También puedes incluir jcenter() si es necesario
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.7.2' // Asegúrate de tener esta versión
+        classpath 'com.google.gms:google-services:4.4.2' // Asegúrate de tener esta línea
+    }
+}
+
 allprojects {
     repositories {
         google()
