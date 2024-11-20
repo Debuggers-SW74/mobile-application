@@ -63,24 +63,33 @@ class _DriverCurrentTripDataScreenState
       _activeTrip.then((trip) {
         _alertService.getByTripId(trip.tripId!).then((alerts) {
           if (alerts.isNotEmpty) {
-            final alert = alerts[0];
-            showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: const Text('Alert'),
-                  content: Text('Alert: ${alert.message}'),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text('OK'),
-                    ),
-                  ],
-                );
-              },
-            );
+            final showedAlerts = alerts.where((alert) {
+              return DateTime.parse(alert.sensorData!.timestamp!).isAfter(
+                  DateTime.now().subtract(const Duration(seconds: 40)));
+            }).toList();
+
+            if (showedAlerts.isNotEmpty) {
+              final alert = showedAlerts[0];
+              // Aquí puedes hacer algo con la primera alerta si es necesario
+
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: const Text('Alert'),
+                    content: Text('Alert: ${alert.message}'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('OK'),
+                      ),
+                    ],
+                  );
+                },
+              );
+            }
           } else {
             print('No alerts found');
           }
