@@ -83,7 +83,6 @@ class _DriverCurrentTripDataScreenState
 
             if (showedAlerts.isNotEmpty) {
               final alert = showedAlerts[0];
-              // Aquí puedes hacer algo con la primera alerta si es necesario
 
               showDialog(
                 context: context,

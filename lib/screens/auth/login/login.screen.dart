@@ -46,8 +46,8 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
 
     //Agregar texto por defecto a los campos email y passowrd
-    _usernameController.text = 'ramon@comp.com';
-    _passwordController.text = 'Zxcqwe123#';
+    //_usernameController.text = 'maria@driv.com';
+    //_passwordController.text = 'Zxcqwe123#;
 
     _usernameFocusNode.addListener(() {
       if (_usernameFocusNode.hasFocus) {
