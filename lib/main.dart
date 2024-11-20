@@ -24,7 +24,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => DriverInfoProvider()),
         ChangeNotifierProvider(create: (_) => SupervisorInfoProvider()),
-        ChangeNotifierProvider(create: (_) => RegistrationProvider()), // Agrega tu otro ChangeNotifier aquí
+        ChangeNotifierProvider(create: (_) => RegistrationProvider()),
       ],
       child: const MyApp(),
     ),
