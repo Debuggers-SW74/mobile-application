@@ -1,7 +1,10 @@
 import 'package:fastporte/common/constants/app.text_styles.constant.dart';
 import 'package:fastporte/common/constants/button_type.enum.dart';
+import 'package:fastporte/models/entities/alert.model.dart';
 import 'package:fastporte/screens/driver/trip_data/pressure_chart.dart';
 import 'package:fastporte/screens/driver/trip_data/temperature_chart.dart';
+import 'package:fastporte/services/alert/alert.service.dart';
+import 'package:fastporte/services/sensor-data/sensor-data.service.dart';
 import 'package:fastporte/services/threshold/threshold.service.dart';
 import 'package:fastporte/services/trip/trip.service.dart';
 import 'package:fastporte/widgets/elevated_button/custom.elevated_button.dart';
@@ -26,6 +29,8 @@ class _SupervisorCurrentTripDataScreenState
 
   final ThresholdService _thresholdService = ThresholdService();
   final TripService _tripService = TripService();
+  final AlertService _alertService = AlertService();
+  final SensorDataService _sensorDataService = SensorDataService();
 
   String? _selectedOption;
   double? minThreshold = 0.0;
@@ -71,7 +76,36 @@ class _SupervisorCurrentTripDataScreenState
   }
 
   void _sendAlert() {
-    print("¡Alerta enviada!");
+    // Create an alert object
+    _activeTrip.then((trip) {
+      final alert = AlertCreate(
+        tripId: trip.tripId!,
+        sensorType: _selectedOption,
+        timestamp: DateTime.now().toIso8601String(),
+      );
+
+      _sensorDataService.getByTripId(trip.tripId!).then((sensorData) {
+        if (sensorData.isNotEmpty) {
+          if (_selectedOption == "SENSOR_GAS") {
+            alert.value = sensorData.last.gasValue?.toDouble();
+          } else if (_selectedOption == "SENSOR_TEMPERATURE") {
+            alert.value = sensorData.last.temperatureValue?.toDouble();
+          } else if (_selectedOption == "SENSOR_PRESSURE") {
+            alert.value = sensorData.last.pressureValue?.toDouble();
+          } else if (_selectedOption == "SENSOR_HUMIDITY") {
+            alert.value = sensorData.last.humidityValue?.toDouble();
+          }
+
+          _alertService.create(alert);
+        } else {
+          print('No sensor data available for the trip.');
+        }
+      }).catchError((error) {
+        print('Error fetching sensor data: $error');
+      });
+    }).catchError((error) {
+      print('Error fetching active trip: $error');
+    });
   }
 
   @override
@@ -161,38 +195,45 @@ class _SupervisorCurrentTripDataScreenState
                                     ],
                                   ),
                                   const SizedBox(height: 16),
-                                  DropdownButton<String>(
-                                    value: _selectedOption,
-                                    hint: const Text("Select an option"),
-                                    items: ["SENSOR_GAS", "SENSOR_TEMPERATURE"]
-                                        .map((option) =>
-                                            DropdownMenuItem<String>(
-                                              value: option,
-                                              child: Text(option),
-                                            ))
-                                        .toList(),
-                                    onChanged: (value) async {
-                                      if (value != null) {
-                                        setState(() {
-                                          _selectedOption = value;
-                                        });
-
-                                        final thresholds = await _thresholdlist;
-                                        final threshold = thresholds.firstWhere(
-                                            (t) => t.sensorType == value);
-                                        setState(() {
-                                          minThreshold = threshold.minThreshold;
-                                          maxThreshold = threshold.maxThreshold;
-                                        });
-                                      }
-                                    },
-                                  ),
                                 ],
                               ),
                             ),
                           ],
                         ),
                       ],
+                    ),
+
+                    Center(
+                      child: DropdownButton<String>(
+                        value: _selectedOption,
+                        hint: const Text("Select an option"),
+                        items: [
+                          "SENSOR_GAS",
+                          "SENSOR_TEMPERATURE",
+                          "SENSOR_PRESSURE",
+                          "SENSOR_HUMIDITY"
+                        ]
+                            .map((option) => DropdownMenuItem<String>(
+                                  value: option,
+                                  child: Text(option),
+                                ))
+                            .toList(),
+                        onChanged: (value) async {
+                          if (value != null) {
+                            setState(() {
+                              _selectedOption = value;
+                            });
+
+                            final thresholds = await _thresholdlist;
+                            final threshold = thresholds
+                                .firstWhere((t) => t.sensorType == value);
+                            setState(() {
+                              minThreshold = threshold.minThreshold;
+                              maxThreshold = threshold.maxThreshold;
+                            });
+                          }
+                        },
+                      ),
                     ),
 
                     Center(

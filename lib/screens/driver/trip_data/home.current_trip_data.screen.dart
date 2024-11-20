@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:fastporte/common/constants/app.text_styles.constant.dart';
+import 'package:fastporte/models/entities/alert.model.dart';
 import 'package:fastporte/screens/driver/trip_data/pressure_chart.dart';
 import 'package:fastporte/screens/driver/trip_data/temperature_chart.dart';
+import 'package:fastporte/services/alert/alert.service.dart';
 import 'package:fastporte/services/threshold/threshold.service.dart';
 import 'package:fastporte/services/trip/trip.service.dart';
 import 'package:fastporte/widgets/screen.template.dart';
@@ -30,11 +34,59 @@ class _DriverCurrentTripDataScreenState
   double? maxThreshold = 0.0;
   late Future<List<th.Threshold>> _thresholdlist;
   late Future<Trip> _activeTrip;
+  final AlertService _alertService = AlertService();
+  late Timer _timer; // Timer para actualizaciones automáticas
 
   @override
   void initState() {
     super.initState();
     _initializeData();
+    _checkAlerts();
+    _startAutoRefresh(); // Iniciar actualizaciones automáticas cada 30 segundos
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel(); // Cancelar el Timer cuando el widget se destruye
+    super.dispose();
+  }
+
+  // Función para iniciar actualizaciones automáticas cada 30 segundos
+  void _startAutoRefresh() {
+    _timer = Timer.periodic(const Duration(seconds: 30), (timer) {
+      _checkAlerts();
+    });
+  }
+
+  void _checkAlerts() async {
+    try {
+      _activeTrip.then((trip) {
+        _alertService.getByTripId(trip.tripId!).then((alerts) {
+          if (alerts.isNotEmpty) {
+            final alert = alerts[0];
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: const Text('Alert'),
+                  content: Text('Alert: ${alert.message}'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('OK'),
+                    ),
+                  ],
+                );
+              },
+            );
+          }
+        });
+      });
+    } catch (e) {
+      print('Error checking alerts: $e');
+    }
   }
 
   void _initializeData() async {
@@ -65,10 +117,6 @@ class _DriverCurrentTripDataScreenState
     } catch (e) {
       print('Error during initialization: $e');
     }
-  }
-
-  void _sendAlert() {
-    print("¡Alerta enviada!");
   }
 
   @override
