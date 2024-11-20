@@ -35,6 +35,7 @@ class _DriverCurrentTripDataScreenState
   late Future<Trip> _activeTrip;
   final AlertService _alertService = AlertService();
   late Timer _timer; // Timer para actualizaciones automáticas
+  List<int> showAlertsIdx = [];
 
   @override
   void initState() {
@@ -65,8 +66,20 @@ class _DriverCurrentTripDataScreenState
           if (alerts.isNotEmpty) {
             final showedAlerts = alerts.where((alert) {
               return DateTime.parse(alert.sensorData!.timestamp!).isAfter(
-                  DateTime.now().subtract(const Duration(seconds: 40)));
+                      DateTime.now().subtract(const Duration(seconds: 40))) &&
+                  !showAlertsIdx.contains(alert.id!);
             }).toList();
+
+            showedAlerts.sort((a, b) {
+              return DateTime.parse(b.sensorData!.timestamp!)
+                  .compareTo(DateTime.parse(a.sensorData!.timestamp!));
+            });
+
+            for (var alert in showedAlerts) {
+              if (!showAlertsIdx.contains(alert.id!)) {
+                showAlertsIdx.add(alert.id!);
+              }
+            }
 
             if (showedAlerts.isNotEmpty) {
               final alert = showedAlerts[0];
@@ -76,14 +89,24 @@ class _DriverCurrentTripDataScreenState
                 context: context,
                 builder: (context) {
                   return AlertDialog(
-                    title: const Text('Alert'),
-                    content: Text('Alert: ${alert.message}'),
+                    backgroundColor: Colors.red,
+                    title: const Text(
+                      'Alert',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    content: Text(
+                      'Alert: ${alert.message}',
+                      style: const TextStyle(color: Colors.white),
+                    ),
                     actions: [
                       TextButton(
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
-                        child: const Text('OK'),
+                        child: const Text(
+                          'OK',
+                          style: TextStyle(color: Colors.white), // Texto blanco
+                        ),
                       ),
                     ],
                   );

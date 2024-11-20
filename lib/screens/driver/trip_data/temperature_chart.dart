@@ -65,6 +65,10 @@ class _TemperatureChart extends State<TemperatureChart> {
                         .toDouble(), // Manejo de nulos
                   ))
               .toList();
+          if (_temperatureSpots.length > 10) {
+            _temperatureSpots =
+                _temperatureSpots.sublist(_temperatureSpots.length - 10);
+          }
 
           _humiditySpots = sensorData
               .asMap()
@@ -74,6 +78,9 @@ class _TemperatureChart extends State<TemperatureChart> {
                     (entry.value.humidityValue ?? 0).toDouble(),
                   ))
               .toList();
+          if (_humiditySpots.length > 10) {
+            _humiditySpots = _humiditySpots.sublist(_humiditySpots.length - 10);
+          }
 
           _xLabels = sensorData
               .map((data) {
@@ -89,6 +96,11 @@ class _TemperatureChart extends State<TemperatureChart> {
               })
               .take(10)
               .toList();
+          if (_xLabels.length > 10) {
+            _xLabels = _xLabels.sublist(_xLabels.length - 10);
+          }
+
+          print('Datos actualizados');
         });
       }
     } catch (e) {
@@ -102,7 +114,7 @@ class _TemperatureChart extends State<TemperatureChart> {
       children: [
         // Encabezados del gráfico
         Padding(
-          padding: EdgeInsets.only(bottom: 8.0),
+          padding: const EdgeInsets.only(bottom: 8.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
