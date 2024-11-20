@@ -1,9 +1,9 @@
 class SensorData {
   int? tripId;
-  int? temperatureValue;
-  int? humidityValue;
-  int? pressureValue;
-  int? gasValue;
+  double? temperatureValue;
+  double? humidityValue;
+  double? pressureValue;
+  double? gasValue;
   String? timestamp;
 
   SensorData(

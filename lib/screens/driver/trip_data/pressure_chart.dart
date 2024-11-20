@@ -19,7 +19,7 @@ class _PressureChart extends State<PressureChart> {
   late Timer _timer; // Timer para actualizaciones automáticas
 
   List<SensorData>? sensorData;
-  int? heightPressure;
+  double? heightPressure;
 
   @override
   void initState() {

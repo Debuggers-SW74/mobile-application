@@ -31,17 +31,18 @@ class SensorDataService {
 
       // Verifica el código de estado de la respuesta
       if (response.statusCode == 200) {
-        // Decodifica la respuesta JSON como una lista
-        List<dynamic> data = jsonDecode(response.body);
 
         print(response.body);
+        // Decodifica la respuesta JSON como una lista
+        var data = jsonDecode(response.body);
+        if(data is List) {
+          // Convierte cada elemento de la lista en un objeto SensorData
+          List<SensorData> sensorData = data.map((item)  => SensorData.fromJson(item)).toList();
 
-        // Convierte cada elemento de la lista en un objeto sensorData
-        List<SensorData> sensorData = data.map((item) {
-          return SensorData.fromJson(item);
-        }).toList();
-
-        return sensorData; // Devuelve la lista de sensorData
+          return sensorData; // Devuelve la lista de SensorData
+        } else {
+          throw Exception('Unexpected data format');
+        }
       } else {
         throw Exception('Failed to fetch sensorData details: ${response.body}');
       }
