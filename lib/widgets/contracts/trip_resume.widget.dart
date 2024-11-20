@@ -1,5 +1,4 @@
 import 'package:fastporte/models/entities/trip.model.dart';
-import 'package:fastporte/widgets/contracts/driver_resume.widget.dart';
 import 'package:flutter/material.dart';
 
 import '../../common/constants/app.colors.constant.dart';

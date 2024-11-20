@@ -67,7 +67,7 @@ class _PendingContractsTabState extends State<PendingContractsTab> {
                       Trip trip = trips[index];
                       return TripResume(
                         userResume: DriverResume(trip: trip),
-                        rowButtons: Row(
+                        rowButtons: const Row(
                             /*children: [
                       TextButton(
                         onPressed: null,

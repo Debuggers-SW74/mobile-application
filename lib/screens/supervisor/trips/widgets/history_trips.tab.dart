@@ -6,9 +6,6 @@ import 'package:fastporte/widgets/contracts/driver_resume.widget.dart';
 import 'package:fastporte/widgets/contracts/trip_resume.widget.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../common/constants/app.colors.constant.dart';
-import '../../../../common/constants/button_type.enum.dart';
-import '../../../../widgets/elevated_button/custom.elevated_button.dart';
 
 class FinishedSupervisorTripsTab extends StatefulWidget {
   const FinishedSupervisorTripsTab({super.key});

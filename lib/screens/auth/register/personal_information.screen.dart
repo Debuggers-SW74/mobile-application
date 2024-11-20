@@ -1,9 +1,7 @@
 import 'package:fastporte/common/constants/app.routes.constant.dart';
-import 'package:fastporte/services/driver/driver.service.dart';
 import 'package:fastporte/widgets/elevated_button/custom.elevated_button.dart';
 import 'package:fastporte/widgets/text_field/custom.text_form_field.dart';
 import 'package:flutter/material.dart';
-import 'package:fastporte/util/helpers/date_time.helper.dart';
 import 'package:fastporte/common/constants/app.constraints.constant.dart';
 import 'package:fastporte/common/constants/app.text_styles.constant.dart';
 import 'package:fastporte/common/constants/button_type.enum.dart';
@@ -15,13 +13,6 @@ import 'package:provider/provider.dart';
 
 import '../../../common/constants/app.colors.constant.dart';
 import '../../../providers/registration.provider.dart';
-import 'package:fastporte/util/formatters/last_names.formatter.dart';
-import 'package:fastporte/common/constants/id_type_configs.constant.dart';
-import 'package:fastporte/widgets/app_bar/main.app_bar.dart';
-import 'package:fastporte/widgets/text_field/template.input_decoration.dart';
-import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
-import 'package:go_router/go_router.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 
 class PersonalInformationPage extends StatefulWidget {

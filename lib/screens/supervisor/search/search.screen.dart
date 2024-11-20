@@ -1,7 +1,6 @@
 import 'package:fastporte/models/entities/driver.dart';
 import 'package:fastporte/screens/supervisor/search/widgets/driver_result_tile.widget.dart';
 import 'package:fastporte/services/supervisor/supervisor.service.dart';
-import 'package:fastporte/widgets/screen.template.dart';
 import 'package:flutter/material.dart';
 
 import '../../../common/constants/app.colors.constant.dart';

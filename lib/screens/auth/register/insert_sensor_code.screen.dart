@@ -11,7 +11,6 @@ import '../../../common/constants/app.constraints.constant.dart';
 import '../../../common/constants/app.text_styles.constant.dart';
 import '../../../common/constants/button_type.enum.dart';
 import '../../../providers/registration.provider.dart';
-import '../../../util/validators/input.validators.dart';
 import '../../../widgets/elevated_button/custom.elevated_button.dart';
 
 class InsertSensorCode extends StatefulWidget {

@@ -1,8 +1,65 @@
+import 'dart:async';
+
+import 'package:fastporte/models/entities/sensor_data.model.dart';
+import 'package:fastporte/services/sensor-data/sensor-data.service.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
-class PressureChart extends StatelessWidget {
-  const PressureChart({super.key});
+class PressureChart extends StatefulWidget {
+  final int tripId;
+
+  const PressureChart({super.key, required this.tripId});
+
+  @override
+  State<PressureChart> createState() => _PressureChart();
+}
+
+class _PressureChart extends State<PressureChart> {
+  final SensorDataService _sensorDataService = SensorDataService();
+  late Timer _timer; // Timer para actualizaciones automáticas
+
+  List<SensorData>? sensorData;
+  double? heightPressure;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeData(); // Cargar datos iniciales
+    _startAutoRefresh(); // Iniciar actualizaciones automáticas cada 30 segundos
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel(); // Cancelar el Timer cuando el widget se destruye
+    super.dispose();
+  }
+
+  // Función para iniciar actualizaciones automáticas cada 30 segundos
+  void _startAutoRefresh() {
+    _timer = Timer.periodic(const Duration(seconds: 30), (timer) {
+      _initializeData();
+    });
+  }
+
+  void _initializeData() async {
+    try {
+      // Obtener datos del servicio
+      List<SensorData> sensorData =
+          await _sensorDataService.getByTripId(widget.tripId);
+
+      if (sensorData.isNotEmpty) {
+        this.sensorData = sensorData;
+
+        print('Datos cargados: ${sensorData.length} registros');
+
+        setState(() {
+          heightPressure = sensorData[0].pressureValue;
+        });
+      }
+    } catch (e) {
+      print('Error al cargar datos: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -12,13 +69,13 @@ class PressureChart extends StatelessWidget {
       child: BarChart(
         BarChartData(
           alignment: BarChartAlignment.center,
-          maxY: 500,
+          maxY: 255,
           barGroups: [
             BarChartGroupData(
               x: 0,
               barRods: [
                 BarChartRodData(
-                  toY: 350, // Altura de la barra
+                  toY: heightPressure?.toDouble() ?? 0, // Altura de la barra
                   color: Colors.blue.withOpacity(0.7),
                   width: 120,
                   borderRadius: BorderRadius.circular(50),
@@ -34,7 +91,7 @@ class PressureChart extends StatelessWidget {
             leftTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
-                interval: 100, // Intervalos en el eje izquierdo
+                interval: 55, // Intervalos en el eje izquierdo
                 reservedSize: 60,
                 getTitlesWidget: (value, meta) {
                   return Text(
@@ -66,7 +123,7 @@ class PressureChart extends StatelessWidget {
             show: true,
             drawHorizontalLine: true,
             getDrawingHorizontalLine: (value) {
-              return FlLine(
+              return const FlLine(
                 color: Colors.grey,
                 strokeWidth: 0.5,
               );

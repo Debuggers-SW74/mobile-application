@@ -7,7 +7,6 @@ import 'package:fastporte/services/driver/update_driver.model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../../common/constants/environment_url.constant.dart';
-import '../../models/entities/trip.model.dart';
 
 class DriverService {
   final String baseUrl = EnvironmentConstants.CURRENT_ENV_URL;

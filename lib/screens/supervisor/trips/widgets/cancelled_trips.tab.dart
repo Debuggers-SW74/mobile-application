@@ -1,14 +1,11 @@
 import 'package:fastporte/common/constants/app.constraints.constant.dart';
-import 'package:fastporte/common/constants/button_type.enum.dart';
 import 'package:fastporte/common/constants/default_data.constant.dart';
 import 'package:fastporte/models/entities/trip.model.dart';
 import 'package:fastporte/services/trip/trip.service.dart';
 import 'package:fastporte/widgets/contracts/driver_resume.widget.dart';
 import 'package:fastporte/widgets/contracts/trip_resume.widget.dart';
-import 'package:fastporte/widgets/elevated_button/custom.elevated_button.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../common/constants/app.colors.constant.dart';
 
 class CancelledSupervisorTripsTab extends StatefulWidget {
   const CancelledSupervisorTripsTab({super.key});

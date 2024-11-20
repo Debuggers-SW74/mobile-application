@@ -1,11 +1,13 @@
-import 'dart:async';
-
 import 'package:fastporte/common/constants/app.text_styles.constant.dart';
+import 'package:fastporte/common/constants/button_type.enum.dart';
+import 'package:fastporte/models/entities/alert.model.dart';
 import 'package:fastporte/screens/driver/trip_data/pressure_chart.dart';
 import 'package:fastporte/screens/driver/trip_data/temperature_chart.dart';
 import 'package:fastporte/services/alert/alert.service.dart';
+import 'package:fastporte/services/sensor-data/sensor-data.service.dart';
 import 'package:fastporte/services/threshold/threshold.service.dart';
 import 'package:fastporte/services/trip/trip.service.dart';
+import 'package:fastporte/widgets/elevated_button/custom.elevated_button.dart';
 import 'package:fastporte/widgets/screen.template.dart';
 import 'package:flutter/material.dart';
 
@@ -13,119 +15,39 @@ import '../../../models/entities/trip.model.dart';
 import '../../../widgets/app_bar/logged.app_bar.dart';
 import '../../../models/entities/threshold.model.dart' as th;
 
-class DriverCurrentTripDataScreen extends StatefulWidget {
-  const DriverCurrentTripDataScreen({super.key});
+class SupervisorCurrentTripDataScreen extends StatefulWidget {
+  const SupervisorCurrentTripDataScreen({super.key});
 
   @override
-  State<DriverCurrentTripDataScreen> createState() =>
-      _DriverCurrentTripDataScreenState();
+  State<SupervisorCurrentTripDataScreen> createState() =>
+      _SupervisorCurrentTripDataScreenState();
 }
 
-class _DriverCurrentTripDataScreenState
-    extends State<DriverCurrentTripDataScreen> {
+class _SupervisorCurrentTripDataScreenState
+    extends State<SupervisorCurrentTripDataScreen> {
   bool _activeTripExists = false;
 
   final ThresholdService _thresholdService = ThresholdService();
   final TripService _tripService = TripService();
+  final AlertService _alertService = AlertService();
+  final SensorDataService _sensorDataService = SensorDataService();
 
   String? _selectedOption;
   double? minThreshold = 0.0;
   double? maxThreshold = 0.0;
   late Future<List<th.Threshold>> _thresholdlist;
   late Future<Trip> _activeTrip;
-  final AlertService _alertService = AlertService();
-  late Timer _timer; // Timer para actualizaciones automáticas
-  List<int> showAlertsIdx = [];
 
   @override
   void initState() {
     super.initState();
-    _initializeData().then((_) {
-      _checkAlerts();
-      _startAutoRefresh();
-    });
+    _initializeData();
   }
 
-  @override
-  void dispose() {
-    _timer.cancel(); // Cancelar el Timer cuando el widget se destruye
-    super.dispose();
-  }
-
-  // Función para iniciar actualizaciones automáticas cada 30 segundos
-  void _startAutoRefresh() {
-    _timer = Timer.periodic(const Duration(seconds: 30), (timer) {
-      _checkAlerts();
-    });
-  }
-
-  void _checkAlerts() async {
+  void _initializeData() async {
     try {
-      _activeTrip.then((trip) {
-        _alertService.getByTripId(trip.tripId!).then((alerts) {
-          if (alerts.isNotEmpty) {
-            final showedAlerts = alerts.where((alert) {
-              return DateTime.parse(alert.sensorData!.timestamp!).isAfter(
-                      DateTime.now().subtract(const Duration(seconds: 40))) &&
-                  !showAlertsIdx.contains(alert.id!);
-            }).toList();
-
-            showedAlerts.sort((a, b) {
-              return DateTime.parse(b.sensorData!.timestamp!)
-                  .compareTo(DateTime.parse(a.sensorData!.timestamp!));
-            });
-
-            for (var alert in showedAlerts) {
-              if (!showAlertsIdx.contains(alert.id!)) {
-                showAlertsIdx.add(alert.id!);
-              }
-            }
-
-            if (showedAlerts.isNotEmpty) {
-              final alert = showedAlerts[0];
-              // Aquí puedes hacer algo con la primera alerta si es necesario
-
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    backgroundColor: Colors.red,
-                    title: const Text(
-                      'Alert',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    content: Text(
-                      'Alert: ${alert.message}',
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: const Text(
-                          'OK',
-                          style: TextStyle(color: Colors.white), // Texto blanco
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              );
-            }
-          } else {
-            print('No alerts found');
-          }
-        });
-      });
-    } catch (e) {
-      print('Error checking alerts: $e');
-    }
-  }
-
-  Future<void> _initializeData() async {
-    try {
-      List<Trip> trips = await _tripService.getTripsByDriverIdAndStatusId(2);
+      List<Trip> trips =
+          await _tripService.getTripsBySupervisorIdAndStatusId(2);
 
       if (trips.isEmpty) {
         setState(() {
@@ -151,6 +73,39 @@ class _DriverCurrentTripDataScreenState
     } catch (e) {
       print('Error during initialization: $e');
     }
+  }
+
+  void _sendAlert() {
+    // Create an alert object
+    _activeTrip.then((trip) {
+      final alert = AlertCreate(
+        tripId: trip.tripId!,
+        sensorType: _selectedOption,
+        timestamp: DateTime.now().toIso8601String(),
+      );
+
+      _sensorDataService.getByTripId(trip.tripId!).then((sensorData) {
+        if (sensorData.isNotEmpty) {
+          if (_selectedOption == "SENSOR_GAS") {
+            alert.value = sensorData.last.gasValue?.toDouble();
+          } else if (_selectedOption == "SENSOR_TEMPERATURE") {
+            alert.value = sensorData.last.temperatureValue?.toDouble();
+          } else if (_selectedOption == "SENSOR_PRESSURE") {
+            alert.value = sensorData.last.pressureValue?.toDouble();
+          } else if (_selectedOption == "SENSOR_HUMIDITY") {
+            alert.value = sensorData.last.humidityValue?.toDouble();
+          }
+
+          _alertService.create(alert);
+        } else {
+          print('No sensor data available for the trip.');
+        }
+      }).catchError((error) {
+        print('Error fetching sensor data: $error');
+      });
+    }).catchError((error) {
+      print('Error fetching active trip: $error');
+    });
   }
 
   @override
@@ -240,38 +195,53 @@ class _DriverCurrentTripDataScreenState
                                     ],
                                   ),
                                   const SizedBox(height: 16),
-                                  DropdownButton<String>(
-                                    value: _selectedOption,
-                                    hint: const Text("Select an option"),
-                                    items: ["SENSOR_GAS", "SENSOR_TEMPERATURE"]
-                                        .map((option) =>
-                                            DropdownMenuItem<String>(
-                                              value: option,
-                                              child: Text(option),
-                                            ))
-                                        .toList(),
-                                    onChanged: (value) async {
-                                      if (value != null) {
-                                        setState(() {
-                                          _selectedOption = value;
-                                        });
-
-                                        final thresholds = await _thresholdlist;
-                                        final threshold = thresholds.firstWhere(
-                                            (t) => t.sensorType == value);
-                                        setState(() {
-                                          minThreshold = threshold.minThreshold;
-                                          maxThreshold = threshold.maxThreshold;
-                                        });
-                                      }
-                                    },
-                                  ),
                                 ],
                               ),
                             ),
                           ],
                         ),
                       ],
+                    ),
+
+                    Center(
+                      child: DropdownButton<String>(
+                        value: _selectedOption,
+                        hint: const Text("Select an option"),
+                        items: [
+                          "SENSOR_GAS",
+                          "SENSOR_TEMPERATURE",
+                          "SENSOR_PRESSURE",
+                          "SENSOR_HUMIDITY"
+                        ]
+                            .map((option) => DropdownMenuItem<String>(
+                                  value: option,
+                                  child: Text(option),
+                                ))
+                            .toList(),
+                        onChanged: (value) async {
+                          if (value != null) {
+                            setState(() {
+                              _selectedOption = value;
+                            });
+
+                            final thresholds = await _thresholdlist;
+                            final threshold = thresholds
+                                .firstWhere((t) => t.sensorType == value);
+                            setState(() {
+                              minThreshold = threshold.minThreshold;
+                              maxThreshold = threshold.maxThreshold;
+                            });
+                          }
+                        },
+                      ),
+                    ),
+
+                    Center(
+                      child: CustomElevatedButton(
+                        onPressed: _sendAlert,
+                        text: "Send Alert",
+                        type: ButtonType.error,
+                      ),
                     ),
                   ],
                 ),
