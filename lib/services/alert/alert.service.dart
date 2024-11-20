@@ -34,11 +34,11 @@ class AlertService {
         List<dynamic> data = jsonDecode(response.body);
 
         // Convierte cada elemento de la lista en un objeto Alert
-        List<Alert> thresholds = data.map((item) {
+        List<Alert> alerts = data.map((item) {
           return Alert.fromJson(item);
         }).toList();
 
-        return thresholds; // Devuelve la lista de Alert
+        return alerts; // Devuelve la lista de Alert
       } else {
         throw Exception('Failed to fetch threshold details: ${response.body}');
       }

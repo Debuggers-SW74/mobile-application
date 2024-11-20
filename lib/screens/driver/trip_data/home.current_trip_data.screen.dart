@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:fastporte/common/constants/app.text_styles.constant.dart';
-import 'package:fastporte/models/entities/alert.model.dart';
 import 'package:fastporte/screens/driver/trip_data/pressure_chart.dart';
 import 'package:fastporte/screens/driver/trip_data/temperature_chart.dart';
 import 'package:fastporte/services/alert/alert.service.dart';
@@ -40,9 +39,10 @@ class _DriverCurrentTripDataScreenState
   @override
   void initState() {
     super.initState();
-    _initializeData();
-    _checkAlerts();
-    _startAutoRefresh(); // Iniciar actualizaciones automáticas cada 30 segundos
+    _initializeData().then((_) {
+      _checkAlerts();
+      _startAutoRefresh();
+    });
   }
 
   @override
@@ -81,6 +81,8 @@ class _DriverCurrentTripDataScreenState
                 );
               },
             );
+          } else {
+            print('No alerts found');
           }
         });
       });
@@ -89,7 +91,7 @@ class _DriverCurrentTripDataScreenState
     }
   }
 
-  void _initializeData() async {
+  Future<void> _initializeData() async {
     try {
       List<Trip> trips = await _tripService.getTripsByDriverIdAndStatusId(2);
 

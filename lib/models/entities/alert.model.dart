@@ -11,7 +11,9 @@ class Alert {
       id: json['id'],
       alertLevel: json['alertLevel'],
       message: json['message'],
-      sensorData: json['sensorData'],
+      sensorData: json['sensorData'] != null
+          ? SensorData.fromJson(json['sensorData'])
+          : null,
     );
   }
 
@@ -20,7 +22,8 @@ class Alert {
       'id': id,
       'alertLevel': alertLevel,
       'message': message,
-      'sensorData': sensorData,
+      'sensorData':
+          sensorData?.toJson(), // Llama al método toJson() de SensorData
     };
   }
 }
